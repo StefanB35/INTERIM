@@ -1,10 +1,10 @@
-# Étude de marché — Apik
+# Étude de marché - Apik
 
 > *L'animateur qui arrive à pic.*
 
 **Secteur retenu : l'animation périscolaire**
 
-Document de cadrage — Livrable « Dossier d'étude de marché »
+Document de cadrage - Livrable « Dossier d'étude de marché »
 
 ---
 
@@ -24,7 +24,7 @@ Cette contrainte crée une urgence de remplacement que les outils actuels du sec
 
 L'animation **périscolaire** au sens du décret n° 2014-1320 : les temps d'accueil situés autour des journées avec école, soit l'accueil du matin, la pause méridienne, l'accueil du soir, et le mercredi lorsqu'il y a classe le matin.
 
-Métier de référence : code ROME **G1203 — Animation de loisirs auprès d'enfants ou d'adolescents**.
+Métier de référence : code ROME **G1203 - Animation de loisirs auprès d'enfants ou d'adolescents**.
 
 ### Ce que nous excluons, et pourquoi
 
@@ -136,7 +136,7 @@ L'espace laissé vacant est celui d'un **outil de conformité qui déclenche du 
 
 ## 7. Cibles prioritaires
 
-**Cible principale : les associations gestionnaires d'accueils périscolaires** par délégation des communes — réseaux type Léo Lagrange, IFAC, Francas, Ligue de l'enseignement, UFCV, PEP. Ce sont des employeurs de droit privé relevant de la convention collective ÉCLAT, pour lesquels le recours à l'intérim ne pose aucune difficulté juridique.
+**Cible principale : les associations gestionnaires d'accueils périscolaires** par délégation des communes - réseaux type Léo Lagrange, IFAC, Francas, Ligue de l'enseignement, UFCV, PEP. Ce sont des employeurs de droit privé relevant de la convention collective ÉCLAT, pour lesquels le recours à l'intérim ne pose aucune difficulté juridique.
 
 **Cible secondaire : les communes et intercommunalités** en régie directe. Le recours à l'intérim y est possible mais encadré et limité à des motifs précis. Ce segment est adressé en second, avec une adaptation du parcours.
 
@@ -150,8 +150,8 @@ L'espace laissé vacant est celui d'un **outil de conformité qui déclenche du 
 |---|---|
 | API France Travail, offres filtrées sur ROME G1203 | Alimentation du flux de missions, détection des zones et périodes de tension |
 | Annuaire de l'éducation (data.gouv.fr) | Base nationale d'établissements scolaires géolocalisés, support du pré-remplissage à l'inscription employeur |
-| INSEE — population par tranche d'âge et commune | Estimation du besoin potentiel, carte de tension |
-| DARES — tension de recrutement par métier | Argumentaire d'étude de marché et indicateur affiché |
+| INSEE - population par tranche d'âge et commune | Estimation du besoin potentiel, carte de tension |
+| DARES - tension de recrutement par métier | Argumentaire d'étude de marché et indicateur affiché |
 
 La disponibilité est immédiate : la période de rentrée scolaire correspond au pic annuel de recrutement périscolaire, ce qui garantit un volume d'offres exploitable dès le démarrage du projet.
 
@@ -173,51 +173,51 @@ La disponibilité est immédiate : la période de rentrée scolaire correspond a
 
 ### Textes réglementaires
 
-- Décret n° 2016-1051 du 1er août 2016 relatif au projet éducatif territorial et à l'encadrement des enfants scolarisés bénéficiant d'activités périscolaires (JORF n° 0178 du 2 août 2016, texte n° 39, NOR VJSJ1605521D) — [analyse et texte](https://blog.landot-avocats.net/2016/08/02/projet-educatif-territorial-temps-daccueils-periscolaires-et-alsh-un-nouveau-decret/)
+- Décret n° 2016-1051 du 1er août 2016 relatif au projet éducatif territorial et à l'encadrement des enfants scolarisés bénéficiant d'activités périscolaires (JORF n° 0178 du 2 août 2016, texte n° 39, NOR VJSJ1605521D) - [analyse et texte](https://blog.landot-avocats.net/2016/08/02/projet-educatif-territorial-temps-daccueils-periscolaires-et-alsh-un-nouveau-decret/)
 - Décret n° 2014-1320 du 3 novembre 2014 (définition des accueils de loisirs périscolaires et extrascolaires)
 - Code de l'action sociale et des familles, articles R227-3 (honorabilité), R227-12 (quotas de qualification), R227-16 (taux d'encadrement)
-- Contrat d'engagement éducatif : articles L432-1 à L432-6 et D432-1 à D432-9 du CASF — [synthèse](https://acm-cvl.fr/encadrement/contrat-dengagement-educatif/)
-- Conseil d'État, 11 octobre 2017, req. n° 403855 (validation des taux assouplis en PEDT) — [décision](https://www.dalloz-actualite.fr/document/ce-11-oct-2017-req-n-403855)
+- Contrat d'engagement éducatif : articles L432-1 à L432-6 et D432-1 à D432-9 du CASF - [synthèse](https://acm-cvl.fr/encadrement/contrat-dengagement-educatif/)
+- Conseil d'État, 11 octobre 2017, req. n° 403855 (validation des taux assouplis en PEDT) - [décision](https://www.dalloz-actualite.fr/document/ce-11-oct-2017-req-n-403855)
 
 ### Taux d'encadrement et qualification
 
-- [Taux d'encadrement en périscolaire : un décret valide le 1/14 et le 1/18](https://www.jdanimation.fr/infos/taux-d-encadrement-en-periscolaire-un-decret-valide-le-114-et-le-118) — Le Journal de l'Animation
-- [Taux d'encadrement en ACM — réglementation](https://www.jesuisanimateur.fr/reglementation-acm/encadrement-qualifications/taux-encadrement-acm) — JeSuisAnimateur.fr
-- [Taux d'encadrement ACM : centre de loisirs, périscolaire](https://monespaceacm.com/blog/taux-encadrement-acm) — MonEspaceACM
-- [Taux d'encadrement pour les accueils de loisirs](https://www.ifac.asso.fr/Taux-d-encadrement-pour-les) — IFAC
-- [Normes d'encadrement en accueil de loisirs périscolaire](https://www.ac-poitiers.fr/media/20574/download) — Académie de Poitiers (PDF)
+- [Taux d'encadrement en périscolaire : un décret valide le 1/14 et le 1/18](https://www.jdanimation.fr/infos/taux-d-encadrement-en-periscolaire-un-decret-valide-le-114-et-le-118) - Le Journal de l'Animation
+- [Taux d'encadrement en ACM - réglementation](https://www.jesuisanimateur.fr/reglementation-acm/encadrement-qualifications/taux-encadrement-acm) - JeSuisAnimateur.fr
+- [Taux d'encadrement ACM : centre de loisirs, périscolaire](https://monespaceacm.com/blog/taux-encadrement-acm) - MonEspaceACM
+- [Taux d'encadrement pour les accueils de loisirs](https://www.ifac.asso.fr/Taux-d-encadrement-pour-les) - IFAC
+- [Normes d'encadrement en accueil de loisirs périscolaire](https://www.ac-poitiers.fr/media/20574/download) - Académie de Poitiers (PDF)
 
 ### Pénurie et tension de recrutement
 
-- [Animateurs périscolaires : des pistes pour endiguer la pénurie](https://www.banquedesterritoires.fr/animateurs-periscolaires-des-pistes-pour-endiguer-la-penurie) — Banque des Territoires, octobre 2022 (50 000 postes non pourvus, 10 % des effectifs)
-- [Une pénurie se confirme pour les recrutements dans le secteur de l'animation](https://toutpourlemploi.fr/2021/10/penurie-recrutement-animation/) — enquête Hexopée / Fonjep (5 245 postes non pourvus sur 1 182 structures ; BAFA délivrés 53 000 en 2011 → 43 000 en 2019)
-- [Crise de l'animation : des difficultés de recrutement toujours réelles](https://www.jdanimation.fr/infos/crise-de-l-animation-des-difficultes-toujours-reelles) — baromètre Hexopée 2024, 4e édition (69 % des répondants, 2 126 structures)
-- [10 ressources autour de la crise du secteur de l'animation](https://www.jdanimation.fr/infos/10-ressources-autour-de-la-crise-du-secteur-de-l-animation) — Le Journal de l'Animation (76 % de difficultés, 59 % d'activités adaptées ou annulées)
-- [Un recrutement toujours compliqué dans le secteur de l'animation](https://www.jdanimation.fr/revues/articles/un-recrutement-toujours-complique-dans-le-secteur-de-l-animation) — octobre 2025
-- [Question écrite au Sénat sur la pénurie d'animateurs périscolaires](https://www.senat.fr/questions/base/2021/qSEQ211025102.html) — 2021 (94 180 projets de recrutement en 2020 ; journées fragmentées et turnover)
-- [Question écrite au Sénat sur la pénurie d'animateurs en centres de loisirs](https://www.senat.fr/questions/base/2022/qSEQ220701969.html) — 2022 (projection France Stratégie)
-- [Question orale à l'Assemblée nationale n° 1525](https://questions.assemblee-nationale.fr/q15/15-1525QOSD.htm) — 2021 (rémunération citée par 24 %, temps partiels par 15 %)
-- [Animation : le gouvernement veut répondre aux « profondes difficultés » du secteur](https://www.maire-info.com/animation-le-gouvernement-veut-repondre-aux-profondes-difficultes--du-secteur-article2-26154) — Maire-Info
-- [Avis du comité de filière animation sur la réforme du contrat d'engagement éducatif](https://www.jeunes.gouv.fr/media/2818/download) — jeunes.gouv.fr (PDF)
+- [Animateurs périscolaires : des pistes pour endiguer la pénurie](https://www.banquedesterritoires.fr/animateurs-periscolaires-des-pistes-pour-endiguer-la-penurie) - Banque des Territoires, octobre 2022 (50 000 postes non pourvus, 10 % des effectifs)
+- [Une pénurie se confirme pour les recrutements dans le secteur de l'animation](https://toutpourlemploi.fr/2021/10/penurie-recrutement-animation/) - enquête Hexopée / Fonjep (5 245 postes non pourvus sur 1 182 structures ; BAFA délivrés 53 000 en 2011 → 43 000 en 2019)
+- [Crise de l'animation : des difficultés de recrutement toujours réelles](https://www.jdanimation.fr/infos/crise-de-l-animation-des-difficultes-toujours-reelles) - baromètre Hexopée 2024, 4e édition (69 % des répondants, 2 126 structures)
+- [10 ressources autour de la crise du secteur de l'animation](https://www.jdanimation.fr/infos/10-ressources-autour-de-la-crise-du-secteur-de-l-animation) - Le Journal de l'Animation (76 % de difficultés, 59 % d'activités adaptées ou annulées)
+- [Un recrutement toujours compliqué dans le secteur de l'animation](https://www.jdanimation.fr/revues/articles/un-recrutement-toujours-complique-dans-le-secteur-de-l-animation) - octobre 2025
+- [Question écrite au Sénat sur la pénurie d'animateurs périscolaires](https://www.senat.fr/questions/base/2021/qSEQ211025102.html) - 2021 (94 180 projets de recrutement en 2020 ; journées fragmentées et turnover)
+- [Question écrite au Sénat sur la pénurie d'animateurs en centres de loisirs](https://www.senat.fr/questions/base/2022/qSEQ220701969.html) - 2022 (projection France Stratégie)
+- [Question orale à l'Assemblée nationale n° 1525](https://questions.assemblee-nationale.fr/q15/15-1525QOSD.htm) - 2021 (rémunération citée par 24 %, temps partiels par 15 %)
+- [Animation : le gouvernement veut répondre aux « profondes difficultés » du secteur](https://www.maire-info.com/animation-le-gouvernement-veut-repondre-aux-profondes-difficultes--du-secteur-article2-26154) - Maire-Info
+- [Avis du comité de filière animation sur la réforme du contrat d'engagement éducatif](https://www.jeunes.gouv.fr/media/2818/download) - jeunes.gouv.fr (PDF)
 
 ### Obligations des organisateurs
 
-- [Organisateurs : ce qu'il faut savoir sur les accueils collectifs de mineurs](https://www.jeunes.gouv.fr/organisateurs-ce-qu-il-faut-savoir-sur-les-accueils-collectifs-de-mineurs-217) — jeunes.gouv.fr
-- [Bases de données en consultation — fichier des interdictions d'exercer](https://www.loire-atlantique.gouv.fr/Actions-de-l-Etat/Jeunesse-sport-engagement-vie-associative/Accueils-collectifs-de-mineurs-ACM/Declaration-des-accueils-et-locaux/Bases-de-donnees-en-consultation) — services de l'État
-- [La téléprocédure TAM](https://www.jeunes.gouv.fr/la-teleprocedure-accueils-de-mineurs-tam-250) — jeunes.gouv.fr
-- [Contrat d'engagement éducatif : que doit contenir le contrat de travail ?](https://www.jdanimation.fr/infos/contrat-d-engagement-educatif-que-doit-contenir-le-contrat-de-travail) — Le Journal de l'Animation
+- [Organisateurs : ce qu'il faut savoir sur les accueils collectifs de mineurs](https://www.jeunes.gouv.fr/organisateurs-ce-qu-il-faut-savoir-sur-les-accueils-collectifs-de-mineurs-217) - jeunes.gouv.fr
+- [Bases de données en consultation - fichier des interdictions d'exercer](https://www.loire-atlantique.gouv.fr/Actions-de-l-Etat/Jeunesse-sport-engagement-vie-associative/Accueils-collectifs-de-mineurs-ACM/Declaration-des-accueils-et-locaux/Bases-de-donnees-en-consultation) - services de l'État
+- [La téléprocédure TAM](https://www.jeunes.gouv.fr/la-teleprocedure-accueils-de-mineurs-tam-250) - jeunes.gouv.fr
+- [Contrat d'engagement éducatif : que doit contenir le contrat de travail ?](https://www.jdanimation.fr/infos/contrat-d-engagement-educatif-que-doit-contenir-le-contrat-de-travail) - Le Journal de l'Animation
 
 ### Jeux de données publiques
 
-- [Annuaire de l'éducation](https://www.data.gouv.fr/datasets/annuaire-de-leducation) — data.gouv.fr, ministère de l'Éducation nationale (sources ONISEP et RAMSESE, mise à jour quotidienne)
-- [Fiche métier ROME G1203 — Animation de loisirs auprès d'enfants ou d'adolescents](https://www.blocsdecompetences.org/metier/G1203)
-- [Fiche métier ROME G1202 — Animation d'activités culturelles ou ludiques](https://www.blocsdecompetences.org/metier/G1202)
-- [Hébergements touristiques classés en France](https://www.data.gouv.fr/datasets/hebergements-touristiques-classes-en-france) — data.gouv.fr (source d'extension V2)
+- [Annuaire de l'éducation](https://www.data.gouv.fr/datasets/annuaire-de-leducation) - data.gouv.fr, ministère de l'Éducation nationale (sources ONISEP et RAMSESE, mise à jour quotidienne)
+- [Fiche métier ROME G1203 - Animation de loisirs auprès d'enfants ou d'adolescents](https://www.blocsdecompetences.org/metier/G1203)
+- [Fiche métier ROME G1202 - Animation d'activités culturelles ou ludiques](https://www.blocsdecompetences.org/metier/G1202)
+- [Hébergements touristiques classés en France](https://www.data.gouv.fr/datasets/hebergements-touristiques-classes-en-france) - data.gouv.fr (source d'extension V2)
 
 ### Concurrence analysée
 
-- [AnimyJob](https://www.animyjob.com/) — dont la page [recrutement d'animateur en 24-48h](https://www.animyjob.com/recrutement-animateur-urgent)
+- [AnimyJob](https://www.animyjob.com/) - dont la page [recrutement d'animateur en 24-48h](https://www.animyjob.com/recrutement-animateur-urgent)
 - [Jobanim](https://www.jobanim.com/)
 - [JeSuisAnimateur.fr](https://www.jesuisanimateur.fr/)
-- [Planet'anim — portail de l'emploi](https://www.planetanim.fr/annonces-offre-emploi/)
+- [Planet'anim - portail de l'emploi](https://www.planetanim.fr/annonces-offre-emploi/)
 - [AnimJobs](https://www.animjobs.com/)

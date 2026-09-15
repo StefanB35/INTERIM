@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Apik — Charte graphique</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --mandarine:#FF7A3D;
+    --mandarine-dark:#F1611F;
+    --jaune:#FFC93C;
+    --turquoise:#14B8A6;
+    --encre:#1A1B41;
+    --creme:#FFF7EF;
+    --card:#FFFFFF;
+    --muted:#6C6C8A;
+    --border:#F0E4D7;
+    --conforme:#1FB668;
+    --hors:#F0453D;
+    --radius:18px;
+    --radius-lg:28px;
+    --shadow:0 14px 40px -18px rgba(26,27,65,.28);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    font-family:'Inter',system-ui,sans-serif;
+    background:var(--creme);
+    color:var(--encre);
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3,.fred{font-family:'Fredoka',sans-serif;font-weight:600;line-height:1.1;letter-spacing:-.01em}
+  .wrap{max-width:960px;margin:0 auto;padding:0 24px}
+  section{padding:64px 0;border-top:2px dashed var(--border)}
+  section:first-of-type{border-top:none}
+
+  .eyebrow{
+    display:inline-flex;align-items:center;gap:8px;
+    font-family:'Fredoka',sans-serif;font-weight:600;font-size:.9rem;
+    color:var(--mandarine-dark);margin-bottom:14px;
+  }
+  .eyebrow::before{content:"";width:10px;height:10px;border-radius:50%;background:var(--jaune);
+    box-shadow:0 0 0 4px rgba(255,201,60,.28)}
+  h2{font-size:clamp(1.6rem,4vw,2.3rem);margin-bottom:10px}
+  .lead{color:var(--muted);max-width:60ch;font-size:1.05rem}
+
+  /* HERO */
+  .hero{
+    position:relative;overflow:hidden;
+    background:
+      radial-gradient(circle at 82% 18%, rgba(255,201,60,.30), transparent 42%),
+      radial-gradient(circle at 12% 88%, rgba(20,184,166,.20), transparent 46%),
+      linear-gradient(180deg,#FFF7EF, #FFEFE2);
+    padding:80px 0 72px;text-align:center;border-top:none;
+  }
+  .hero .wrap{position:relative;z-index:2}
+  .wordmark{
+    font-family:'Fredoka',sans-serif;font-weight:700;
+    font-size:clamp(4rem,17vw,8.5rem);line-height:.9;
+    color:var(--mandarine);display:inline-block;position:relative;
+  }
+  .wordmark .i{position:relative;display:inline-block}
+  .wordmark .i .dot{
+    position:absolute;left:50%;top:-.06em;transform:translateX(-50%);
+    width:.34em;height:.34em;
+  }
+  .tagline{
+    font-family:'Fredoka',sans-serif;font-weight:500;
+    font-size:clamp(1.15rem,3.5vw,1.7rem);color:var(--encre);
+    margin-top:6px;
+  }
+  .hero-sub{margin:22px auto 0;max-width:52ch;color:var(--muted)}
+  /* floating confetti peaks */
+  .confetti{position:absolute;inset:0;z-index:1;pointer-events:none}
+  .confetti span{position:absolute;opacity:.9}
+  .peak{width:0;height:0;border-left:11px solid transparent;border-right:11px solid transparent;border-bottom:18px solid var(--turquoise);border-radius:3px}
+  .dotc{width:14px;height:14px;border-radius:50%}
+  .c1{top:16%;left:9%}.c2{top:26%;right:12%}.c3{top:64%;left:14%}
+  .c4{top:70%;right:10%}.c5{top:12%;left:44%}.c6{bottom:14%;left:50%}
+
+  /* PALETTE */
+  .swatches{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:16px;margin-top:26px}
+  .sw{border-radius:var(--radius);overflow:hidden;background:var(--card);box-shadow:var(--shadow);border:1px solid var(--border)}
+  .sw .chip{height:96px}
+  .sw .meta{padding:12px 14px}
+  .sw .name{font-family:'Fredoka',sans-serif;font-weight:600;font-size:1.02rem}
+  .sw .hex{font-size:.82rem;color:var(--muted);letter-spacing:.02em}
+  .sw .use{font-size:.8rem;color:var(--muted);margin-top:4px}
+
+  /* TYPE */
+  .type-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:26px;box-shadow:var(--shadow);margin-top:24px}
+  .type-card + .type-card{margin-top:18px}
+  .type-role{font-size:.85rem;color:var(--mandarine-dark);font-weight:600;margin-bottom:6px}
+  .specimen-fred{font-family:'Fredoka',sans-serif;font-weight:600;font-size:clamp(2rem,7vw,3.4rem);color:var(--encre);line-height:1}
+  .specimen-inter{font-size:1.05rem;color:var(--encre)}
+  .glyphs{margin-top:12px;color:var(--muted);font-size:.95rem;letter-spacing:.04em}
+  .weights{display:flex;flex-wrap:wrap;gap:16px;margin-top:14px;font-family:'Fredoka',sans-serif;font-size:1.4rem}
+  .weights span{color:var(--encre)}
+  .w4{font-weight:400}.w5{font-weight:500}.w6{font-weight:600}.w7{font-weight:700}
+
+  /* ICON + MOTIFS */
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:24px}
+  @media(max-width:640px){.grid2{grid-template-columns:1fr}}
+  .panel{background:var(--card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:26px;box-shadow:var(--shadow)}
+  .panel h3{font-size:1.15rem;margin-bottom:14px}
+  .iconrow{display:flex;gap:18px;flex-wrap:wrap;align-items:center}
+  .iconrow svg{width:34px;height:34px}
+  .motifs{display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+  .badge-peak{display:inline-flex;padding:10px;border-radius:14px;background:#FFF1E6}
+
+  /* LOGO */
+  .logo-lockup{display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+  .logo-icon{width:76px;height:76px;border-radius:22px;box-shadow:var(--shadow)}
+  .logo-word{font-family:'Fredoka',sans-serif;font-weight:700;font-size:3.2rem;color:var(--mandarine);position:relative}
+  .dodont{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:22px}
+  @media(max-width:640px){.dodont{grid-template-columns:1fr}}
+  .dd{border-radius:var(--radius);padding:16px 18px;font-size:.94rem}
+  .do{background:rgba(31,182,104,.10);border:1px solid rgba(31,182,104,.3)}
+  .dont{background:rgba(240,69,61,.08);border:1px solid rgba(240,69,61,.28)}
+  .dd b{font-family:'Fredoka',sans-serif;display:block;margin-bottom:6px}
+  .do b{color:var(--conforme)}.dont b{color:var(--hors)}
+  .dd ul{list-style:none;display:flex;flex-direction:column;gap:5px}
+  .dd li{padding-left:20px;position:relative;color:var(--encre)}
+  .do li::before{content:"✓";position:absolute;left:0;color:var(--conforme);font-weight:700}
+  .dont li::before{content:"✕";position:absolute;left:0;color:var(--hors);font-weight:700}
+
+  /* VOICE */
+  .voice{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:24px}
+  @media(max-width:640px){.voice{grid-template-columns:1fr}}
+  .bubble{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:18px 20px;box-shadow:var(--shadow);position:relative}
+  .bubble .tag{font-family:'Fredoka',sans-serif;font-weight:600;font-size:.85rem;margin-bottom:8px}
+  .bubble.good .tag{color:var(--conforme)}
+  .bubble.bad .tag{color:var(--hors)}
+  .bubble p{color:var(--encre);font-size:1.02rem}
+  .bubble p + p{margin-top:10px;padding-top:10px;border-top:1px dashed var(--border)}
+  .traits{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}
+  .trait{font-family:'Fredoka',sans-serif;font-weight:500;font-size:.95rem;padding:8px 16px;border-radius:999px;background:#fff;border:1px solid var(--border)}
+  .trait.m{background:rgba(255,122,61,.12);border-color:rgba(255,122,61,.35);color:var(--mandarine-dark)}
+  .trait.t{background:rgba(20,184,166,.12);border-color:rgba(20,184,166,.4);color:#0d8f82}
+  .trait.j{background:rgba(255,201,60,.2);border-color:rgba(240,180,20,.5);color:#9a6b00}
+
+  /* COMPONENTS */
+  .btnrow{display:flex;gap:14px;flex-wrap:wrap;align-items:center;margin-top:8px}
+  .btn{font-family:'Fredoka',sans-serif;font-weight:600;font-size:1rem;border:none;cursor:pointer;
+    padding:13px 26px;border-radius:999px;transition:transform .12s ease, box-shadow .12s ease}
+  .btn:hover{transform:translateY(-2px)}
+  .btn-primary{background:var(--mandarine);color:#fff;box-shadow:0 10px 22px -8px rgba(255,122,61,.7)}
+  .btn-secondary{background:var(--turquoise);color:#fff;box-shadow:0 10px 22px -8px rgba(20,184,166,.6)}
+  .btn-ghost{background:#fff;color:var(--encre);border:2px solid var(--encre)}
+  .badges{display:flex;gap:12px;flex-wrap:wrap;margin-top:8px}
+  .pill{display:inline-flex;align-items:center;gap:7px;font-weight:600;font-size:.9rem;padding:7px 15px;border-radius:999px}
+  .pill.ok{background:rgba(31,182,104,.14);color:var(--conforme)}
+  .pill.warn{background:rgba(240,69,61,.12);color:var(--hors)}
+  .pill.info{background:rgba(20,184,166,.14);color:#0d8f82}
+
+  /* mission card demo */
+  .mission{max-width:420px;background:var(--card);border-radius:var(--radius-lg);box-shadow:var(--shadow);overflow:hidden;border:1px solid var(--border);margin-top:22px}
+  .mission-top{background:linear-gradient(120deg,var(--mandarine),#FF9A5B);padding:18px 22px;color:#fff}
+  .mission-top .when{font-family:'Fredoka',sans-serif;font-weight:600;font-size:1.15rem}
+  .mission-top .who{font-size:.9rem;opacity:.95}
+  .mission-body{padding:20px 22px}
+  .mission-body .place{font-family:'Fredoka',sans-serif;font-weight:600;font-size:1.15rem;margin-bottom:4px}
+  .mission-body .detail{color:var(--muted);font-size:.92rem;margin-bottom:16px}
+  .mission-body .cta{width:100%;justify-content:center;display:flex}
+
+  footer{padding:48px 0 60px;text-align:center;color:var(--muted);border-top:2px dashed var(--border)}
+  footer .wm{font-family:'Fredoka',sans-serif;font-weight:700;color:var(--mandarine);font-size:1.6rem}
+
+  /* load spark animation */
+  @keyframes pop{0%{transform:translateX(-50%) scale(0) rotate(-40deg)}60%{transform:translateX(-50%) scale(1.25) rotate(8deg)}100%{transform:translateX(-50%) scale(1) rotate(0)}}
+  .wordmark .dot{animation:pop .7s .2s both cubic-bezier(.2,1.3,.5,1)}
+  @keyframes floaty{0%,100%{transform:translateY(0)}50%{transform:translateY(-9px)}}
+  .confetti span{animation:floaty 5s ease-in-out infinite}
+  .confetti .c2{animation-delay:.6s}.confetti .c3{animation-delay:1.2s}
+  .confetti .c4{animation-delay:.3s}.confetti .c5{animation-delay:.9s}.confetti .c6{animation-delay:1.5s}
+  @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<header class="hero">
+  <div class="confetti" aria-hidden="true">
+    <span class="c1 peak"></span>
+    <span class="c2 dotc" style="background:var(--jaune)"></span>
+    <span class="c3 dotc" style="background:var(--mandarine)"></span>
+    <span class="c4 peak" style="border-bottom-color:var(--jaune)"></span>
+    <span class="c5 dotc" style="background:var(--turquoise)"></span>
+    <span class="c6 peak" style="border-bottom-color:var(--mandarine)"></span>
+  </div>
+  <div class="wrap">
+    <div class="wordmark">ap<span class="i">i<svg class="dot" viewBox="0 0 24 24" fill="none"><path d="M12 0c.7 5.5 5.8 10.6 11.3 11.3C17.8 12 12.7 17.1 12 22.6 11.3 17.1 6.2 12 0.7 11.3 6.2 10.6 11.3 5.5 12 0Z" fill="#FFC93C"/></svg></span>k</div>
+    <div class="tagline">L'animateur qui arrive à pic.</div>
+    <p class="hero-sub">Charte graphique — une identité joyeuse et chaleureuse pour un moteur sérieux : combler un poste avant demain 7h30, sans sortir du taux d'encadrement.</p>
+  </div>
+</header>
+
+<main>
+
+<!-- LOGO -->
+<section id="logo">
+  <div class="wrap">
+    <span class="eyebrow">Le logo</span>
+    <h2>Une étincelle au sommet</h2>
+    <p class="lead">Le mot-symbole s'écrit en minuscules, rond et amical. Le point du « i » devient une étincelle jaune — le « pic », le bon moment, le petit coup de main qui sauve la journée.</p>
+
+    <div class="logo-lockup" style="margin-top:26px">
+      <svg class="logo-icon" viewBox="0 0 76 76" fill="none" role="img" aria-label="Icône Apik">
+        <rect width="76" height="76" rx="22" fill="#FF7A3D"/>
+        <path d="M20 50 L38 24 L56 50" stroke="#fff" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M38 8c.5 4.2 4.4 8.1 8.6 8.6-4.2.5-8.1 4.4-8.6 8.6-.5-4.2-4.4-8.1-8.6-8.6C33.6 16.1 37.5 12.2 38 8Z" fill="#FFC93C"/>
+      </svg>
+      <div class="logo-word">ap<span class="i" style="position:relative">i<svg style="position:absolute;left:50%;top:-.05em;transform:translateX(-50%);width:.34em;height:.34em" viewBox="0 0 24 24"><path d="M12 0c.7 5.5 5.8 10.6 11.3 11.3C17.8 12 12.7 17.1 12 22.6 11.3 17.1 6.2 12 0.7 11.3 6.2 10.6 11.3 5.5 12 0Z" fill="#FFC93C"/></svg></span>k</div>
+    </div>
+
+    <div class="dodont">
+      <div class="dd do">
+        <b>À faire</b>
+        <ul>
+          <li>Garder l'étincelle jaune sur fond clair ou mandarine</li>
+          <li>Version monochrome encre autorisée sur fond clair</li>
+          <li>Laisser respirer : marge = hauteur du « a »</li>
+        </ul>
+      </div>
+      <div class="dd dont">
+        <b>À éviter</b>
+        <ul>
+          <li>Étirer, incliner ou re-colorer l'étincelle</li>
+          <li>Poser le logo mandarine sur un fond mandarine</li>
+          <li>Passer le mot-symbole en majuscules</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PALETTE -->
+<section id="palette">
+  <div class="wrap">
+    <span class="eyebrow">La palette</span>
+    <h2>Chaude, vive, rassurante</h2>
+    <p class="lead">La mandarine porte l'énergie et l'urgence tenue avec le sourire. Le jaune, c'est l'étincelle. Le turquoise pose la confiance et signale la conformité. L'encre garde tout net et lisible.</p>
+
+    <div class="swatches">
+      <div class="sw"><div class="chip" style="background:#FF7A3D"></div><div class="meta"><div class="name">Mandarine Pik</div><div class="hex">#FF7A3D</div><div class="use">Primaire · actions, énergie</div></div></div>
+      <div class="sw"><div class="chip" style="background:#FFC93C"></div><div class="meta"><div class="name">Jaune Peps</div><div class="hex">#FFC93C</div><div class="use">Accent · l'étincelle, la joie</div></div></div>
+      <div class="sw"><div class="chip" style="background:#14B8A6"></div><div class="meta"><div class="name">Turquoise Confiance</div><div class="hex">#14B8A6</div><div class="use">Secondaire · calme, conformité</div></div></div>
+      <div class="sw"><div class="chip" style="background:#1A1B41"></div><div class="meta"><div class="name">Encre Nuit</div><div class="hex">#1A1B41</div><div class="use">Texte · titres, lisibilité</div></div></div>
+      <div class="sw"><div class="chip" style="background:#FFF7EF;border-bottom:1px solid var(--border)"></div><div class="meta"><div class="name">Crème</div><div class="hex">#FFF7EF</div><div class="use">Fond · douceur, respiration</div></div></div>
+      <div class="sw"><div class="chip" style="background:linear-gradient(90deg,#1FB668 50%,#F0453D 50%)"></div><div class="meta"><div class="name">États</div><div class="hex">#1FB668 · #F0453D</div><div class="use">Conforme · Hors-taux</div></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- TYPOGRAPHIE -->
+<section id="type">
+  <div class="wrap">
+    <span class="eyebrow">La typographie</span>
+    <h2>Ronde pour l'émotion, nette pour les chiffres</h2>
+    <p class="lead">Un duo qui incarne la tension d'Apik : des titres tout en rondeurs pour la chaleur, un corps de texte neutre et carré pour les données de conformité, les créneaux et les contrats.</p>
+
+    <div class="type-card">
+      <div class="type-role">Titrage — Fredoka</div>
+      <div class="specimen-fred">Trouve ton animateur avant 7h30</div>
+      <div class="weights"><span class="w4">Régulier</span><span class="w5">Medium</span><span class="w6">Semibold</span><span class="w7">Bold</span></div>
+      <div class="glyphs">A B C a b c à é ç 0 1 2 3 4 5 6 7 8 9 ! ?</div>
+    </div>
+
+    <div class="type-card">
+      <div class="type-role">Texte courant — Inter</div>
+      <div class="specimen-inter">Il te manque un animateur pour rester dans ton taux d'encadrement ? Publie le créneau en 30 secondes : Apik calcule ta conformité, vérifie l'honorabilité et te propose des profils disponibles dès ce soir.</div>
+      <div class="glyphs">Régulier · Medium · Semibold · Bold — chiffres tabulaires pour les créneaux</div>
+    </div>
+  </div>
+</section>
+
+<!-- ICONOGRAPHIE -->
+<section id="icones">
+  <div class="wrap">
+    <span class="eyebrow">Iconographie & motifs</span>
+    <h2>Des traits arrondis, jamais anguleux</h2>
+    <p class="lead">Icônes au trait épais (2,5 px), bouts arrondis, angles doux. Trois motifs signent la marque : l'étincelle, le pic et le chemin en pointillés (le trajet d'un créneau à l'autre).</p>
+
+    <div class="grid2">
+      <div class="panel">
+        <h3>Jeu d'icônes</h3>
+        <div class="iconrow" style="color:var(--encre)">
+          <svg viewBox="0 0 32 32" fill="none" stroke="#FF7A3D" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M16 3v6M16 29v-6M3 16h6M29 16h-6M7 7l4 4M25 25l-4-4M25 7l-4 4M7 25l4-4"/></svg>
+          <svg viewBox="0 0 32 32" fill="none" stroke="#14B8A6" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M16 29s10-6.5 10-14a10 10 0 1 0-20 0c0 7.5 10 14 10 14Z"/><circle cx="16" cy="15" r="3.5"/></svg>
+          <svg viewBox="0 0 32 32" fill="none" stroke="#1A1B41" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 25 16 8l11 17"/><path d="M11 25l5-8 5 8"/></svg>
+          <svg viewBox="0 0 32 32" fill="none" stroke="#FF7A3D" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="7" width="22" height="20" rx="4"/><path d="M5 13h22M11 4v5M21 4v5"/></svg>
+          <svg viewBox="0 0 32 32" fill="none" stroke="#14B8A6" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 16l6 6 14-14"/></svg>
+        </div>
+      </div>
+      <div class="panel">
+        <h3>Motifs de marque</h3>
+        <div class="motifs">
+          <span class="badge-peak">
+            <svg width="26" height="26" viewBox="0 0 24 24"><path d="M12 0c.7 5.5 5.8 10.6 11.3 11.3C17.8 12 12.7 17.1 12 22.6 11.3 17.1 6.2 12 0.7 11.3 6.2 10.6 11.3 5.5 12 0Z" fill="#FFC93C"/></svg>
+          </span>
+          <span class="badge-peak"><span class="peak" style="border-bottom-color:var(--mandarine)"></span></span>
+          <svg width="120" height="22" aria-hidden="true"><path d="M4 11h6M18 11h6M32 11h6M46 11h6M60 11h6M74 11h6M88 11h6M102 11h6" stroke="#14B8A6" stroke-width="3" stroke-linecap="round" stroke-dasharray="0.1 12"/></svg>
+        </div>
+        <p style="color:var(--muted);font-size:.9rem;margin-top:14px">Étincelle · pic · chemin pointillé — à doser, un motif à la fois.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TON DE VOIX -->
+<section id="voix">
+  <div class="wrap">
+    <span class="eyebrow">Le ton de voix</span>
+    <h2>On tutoie, on rassure, on va droit au but</h2>
+    <p class="lead">Apik parle comme un collègue débrouillard : chaleureux et optimiste avec l'animateur, précis et fiable avec l'organisateur. Jamais corporate, jamais alarmiste — même quand c'est urgent.</p>
+
+    <div class="traits">
+      <span class="trait m">Chaleureux</span>
+      <span class="trait t">Fiable</span>
+      <span class="trait j">Malin</span>
+      <span class="trait m">Direct</span>
+      <span class="trait t">Rassurant</span>
+      <span class="trait j">Optimiste</span>
+    </div>
+
+    <div class="voice">
+      <div class="bubble good">
+        <div class="tag">✓ La voix d'Apik</div>
+        <p>« Il te manque un animateur demain matin ? On s'en occupe. »</p>
+        <p>« Créneau publié ! On te prévient dès qu'un profil dispo répond. »</p>
+        <p>« Ton équipe est conforme. Tu peux souffler. »</p>
+      </div>
+      <div class="bubble bad">
+        <div class="tag">✕ Pas la voix d'Apik</div>
+        <p>« Votre requête de recrutement a été soumise avec succès. »</p>
+        <p>« ALERTE : non-conformité réglementaire détectée. »</p>
+        <p>« Optimisez votre sourcing RH grâce à notre solution. »</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- COMPOSANTS -->
+<section id="composants">
+  <div class="wrap">
+    <span class="eyebrow">Les composants</span>
+    <h2>Ronds, généreux, sans détour</h2>
+    <p class="lead">Boutons en pastille, coins bien arrondis, ombres douces. Les statuts de conformité sont toujours lisibles d'un coup d'œil — c'est le cœur du produit.</p>
+
+    <div class="grid2" style="margin-top:24px">
+      <div class="panel">
+        <h3>Boutons</h3>
+        <div class="btnrow">
+          <button class="btn btn-primary">Publier le créneau</button>
+          <button class="btn btn-secondary">Voir les profils</button>
+        </div>
+        <div class="btnrow" style="margin-top:14px">
+          <button class="btn btn-ghost">Plus tard</button>
+        </div>
+      </div>
+      <div class="panel">
+        <h3>Statuts</h3>
+        <div class="badges">
+          <span class="pill ok">✓ Équipe conforme</span>
+          <span class="pill warn">⚠ Hors-taux : –1</span>
+        </div>
+        <div class="badges" style="margin-top:12px">
+          <span class="pill info">● Honorabilité vérifiée</span>
+        </div>
+      </div>
+    </div>
+
+    <h3 class="fred" style="margin-top:34px;font-size:1.2rem">Carte « mission » — l'objet central</h3>
+    <div class="mission">
+      <div class="mission-top">
+        <div class="when">Demain · 7h30 – 8h30</div>
+        <div class="who">Accueil du matin · enfants 6-10 ans</div>
+      </div>
+      <div class="mission-body">
+        <div class="place">Assoc. Léo Lagrange · Rennes</div>
+        <div class="detail">Il manque 1 animateur pour rester au 1/14. BAFA requis.</div>
+        <div class="badges" style="margin-bottom:16px">
+          <span class="pill warn">⚠ Hors-taux</span>
+          <span class="pill info">● 4 profils dispo</span>
+        </div>
+        <div class="cta"><button class="btn btn-primary" style="width:100%">Je prends le créneau</button></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="wm">apik</div>
+    <p style="margin-top:6px">Charte graphique — proposition v1 · direction joyeuse & rassurante</p>
+  </div>
+</footer>
+
+</body>
+</html>
