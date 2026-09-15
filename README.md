@@ -12,6 +12,7 @@ Le dossier `Cadrage/` regroupe les documents de conception, d'etude et les resso
 ### Documents de cadrage
 
 - `Cadrage/Apik-etude-de-marche.md` : etude du marche de l'animation periscolaire, besoins des animateurs et des structures, reglementation, concurrence et proposition de valeur.
+- `Cadrage/Apik-cahier-des-charges-apik.md` : cahier des charges definissant le perimetre fonctionnel du POC, les fonctionnalites hors perimetre, le chiffrage du temps de travail et la roadmap de production.
 - `Cadrage/Projet-interimatch.pdf` : presentation generale du projet et de son fonctionnement.
 - `Cadrage/Complements-de-cadrage.pdf` : informations complementaires qui precisent le perimetre et les besoins du projet.
 - `Cadrage/Apik-parcours-et-directions.pdf` : parcours utilisateurs et directions fonctionnelles envisagees pour l'application.
