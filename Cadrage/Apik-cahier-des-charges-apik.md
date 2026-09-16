@@ -59,7 +59,7 @@ Conformément au sujet, la donnée n'est pas affichée brute : elle alimente une
 | F9 | Verrou d'honorabilité bloquant (art. R227-3) | Placement d'adultes auprès de mineurs : traité comme filtre, jamais comme score |
 | F10 | Tableau de bord employeur : état des missions (ouverte / pourvue / terminée) et voyant de conformité | Exigence du sujet |
 | F11 | Pages publiques des missions et page d'accueil, SEO on-page | Exigence du sujet |
-| F12 | Deux automatisations n8n : alerte de match sur Discord, génération de la fiche de confirmation de mission | Exigence du sujet |
+| F12 | Deux automatisations n8n : alerte de match sur Mail, génération de la fiche de confirmation de mission | Exigence du sujet |
 | F13 | CLI d'import et de nettoyage des données publiques | Exigence du sujet |
 | F14 | Interface responsive mobile / tablette / desktop | Exigence du sujet |
 | F15 | Accessibilité RGAA 4.1 (critères de base) et deux pratiques RGESN documentées | Exigence du sujet |
@@ -74,7 +74,7 @@ Conformément au sujet, la donnée n'est pas affichée brute : elle alimente une
 | Paiement, facturation, gestion de paie | Un POC de 11 jours ne peut pas porter un flux financier crédible |
 | Connexion à la téléprocédure TAM | Accès réservé aux organisateurs déclarés, non ouvrable dans le cadre du projet. Le statut d'honorabilité est saisi et daté manuellement par la structure, avec preuve déposée |
 | Colonies, camping, événementiel, petite enfance | Régimes contractuels distincts (CEE, CDD d'usage), justifié dans l'étude de marché |
-| Messagerie interne employeur / animateur | Remplacée par la notification Discord et le cycle de mission |
+| Messagerie interne employeur / animateur | Remplacée par la notification Mail et le cycle de mission |
 | Application mobile native | Le responsive couvre l'exigence |
 
 ---
@@ -180,7 +180,7 @@ Rétroplanning calibré pour quatre membres travaillant en parallèle selon la r
 | **J+4** | Authentification et données | Authentification complète (rôles structure / animateur, JWT, hachage). CLI d'import et de nettoyage (Annuaire de l'éducation + API France Travail). Front : formulaires d'inscription et de connexion. |
 | **J+5** | Créneaux et conformité | Back : CRUD sites et créneaux. Moteur de calcul des taux d'encadrement (décret 2016-1051) et des quotas BAFA. Front : vue planning et tableau de bord employeur avec statuts de conformité. |
 | **J+6** | Moteur de matching | Chaîne de délibération : verrous bloquants puis score pondéré. Historisation des délibérations dans MongoDB (`match_runs`). Front : profils matchés côté employeur, propositions côté animateur. **Point de contrôle de la réserve (chapitre 5.1).** |
-| **J+7** | Workflows n8n et cycle de mission | Worker *outbox* (Postgres → n8n). Deux scénarios n8n : notification d'urgence Discord et génération de la fiche de confirmation. Gestion des statuts `ouverte` / `pourvue` / `terminée`. |
+| **J+7** | Workflows n8n et cycle de mission | Worker *outbox* (Postgres → n8n). Deux scénarios n8n : notification d'urgence Mail et génération de la fiche de confirmation. Gestion des statuts `ouverte` / `pourvue` / `terminée`. |
 | **J+8** | Tests critiques et sécurité | Tests unitaires (calculateur d'encadrement, formule de score). Tests fonctionnels sur les 3 parcours critiques (inscription, déclaration de créneau, matching). Rapport de couverture généré. Chiffrement applicatif des données sensibles. |
 | **J+9** | Accessibilité, éco-conception, SEO | Audit et correctifs RGAA 4.1 (contrastes, navigation clavier, alternatives textuelles). Deux pratiques RGESN : compression des assets, mise en cache et réduction des requêtes. SEO socle sur les pages publiques. |
 | **J+10** | Gel du code et répétition | Tests de bout en bout sur le parcours complet. Nettoyage du dépôt, README finalisé. Rédaction du chiffrage réel vs estimé. Construction du support de pitch. |
@@ -221,7 +221,7 @@ Quatre membres, un module n'a qu'un seul responsable. La charge est équilibrée
 | Base relationnelle | PostgreSQL | Utilisateurs, structures, créneaux, missions, contrats : données fortement relationnelles et contraintes d'intégrité |
 | Base non relationnelle | MongoDB | Historisation des délibérations de matching (`match_runs`) : documents hétérogènes, volumétrie en écriture, replay d'un score sans recalcul |
 | Cache / file | Redis | Résultats de matching, file de l'*outbox* n8n |
-| Automatisation | n8n + webhook Discord | Recommandation du sujet, orchestration simple, pas de dépendance à la délivrabilité email |
+| Automatisation | n8n + webhook Mail | Recommandation du sujet, orchestration simple, pas de dépendance à la délivrabilité email |
 | CLI | Commander ou équivalent | Import et nettoyage des données publiques |
 | Tests | Vitest ou Jest (unitaires), Supertest (fonctionnels) | Rapport de couverture livré |
 
@@ -295,14 +295,25 @@ Quatre membres, un module n'a qu'un seul responsable. La charge est équilibrée
 
 ## Annexe A — Calculateur de taux d'encadrement
 
-**Taux d'encadrement (décret n° 2016-1051)**
+**Taux d'encadrement (article R227-16 du CASF)**
 
-| Configuration | Moins de 6 ans | 6 ans et plus |
+#### Sans Projet Educatif de Territoire (PEDT)
+
+| Duree de l'accueil | Moins de 6 ans | 6 ans et plus |
 |---|---|---|
-| Sans PEDT | 1 pour 10 | 1 pour 14 |
-| Avec PEDT | 1 pour 14 | 1 pour 18 |
+| Moins de 5 heures consecutives | 1 pour 10 | 1 pour 14 |
+| Plus de 5 heures consecutives | 1 pour 8 | 1 pour 12 |
 
-Les seuils varient également selon que l'accueil dure plus ou moins de cinq heures consécutives. Le POC couvre ces quatre configurations.
+#### Avec Projet Educatif de Territoire (PEDT)
+
+| Duree de l'accueil | Moins de 6 ans | 6 ans et plus |
+|---|---|---|
+| Moins de 5 heures consecutives | 1 pour 14 | 1 pour 18 |
+| Plus de 5 heures consecutives | 1 pour 10 | 1 pour 14 |
+
+Durant le temps de deplacement entre l'ecole et le local declare au PEDT, le taux d'encadrement est de 1 animateur pour 14 mineurs de 6 ans et plus et de 1 animateur pour 10 mineurs de moins de 6 ans.
+
+Le POC couvre ces configurations ainsi que le cas specifique des deplacements lies au PEDT.
 
 **Quotas de qualification (art. R227-12 du CASF)**
 
