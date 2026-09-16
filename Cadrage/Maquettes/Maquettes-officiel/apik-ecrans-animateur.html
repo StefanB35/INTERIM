@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Apik — Écrans animateur</title>
+<meta name="description" content="Les quatre écrans côté animateur d'Apik : inscription et honorabilité, profil, propositions de créneaux, agrégation des heures sur plusieurs employeurs.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+
+:root{
+  /* Primitives de marque — identiques en clair et en sombre : les maquettes sont des artefacts */
+  --mandarine:#FF7A3D; --mandarine-fonce:#E5651F; --mandarine-texte:#C2410C;
+  --turquoise:#14B8A6; --turquoise-texte:#0F766E;
+  --jaune:#FFC93C;
+  --encre:#1A1B41; --encre-70:#4C4D6B; --encre-55:#6E6F91;
+  --creme:#FFF7EF; --creme-bord:#F0E4D7; --sable:#F3E9DE;
+  --vert:#1FB668; --vert-texte:#0E7C4A; --rouge:#F0453D; --rouge-texte:#C4302B;
+  --gris-wf:#D8D3CC; --gris-wf-fonce:#B6B0A8; --gris-wf-texte:#7A736B;
+  /* Tokens de page */
+  --canvas:#F3E9DE; --surface:#FFF7EF; --bord:#E6D9CA; --texte:#1A1B41; --texte-doux:#4C4D6B;
+  --r-s:10px; --r-m:16px; --r-l:22px; --r-pill:999px;
+  --ombre-1:0 1px 2px rgba(26,27,65,.06);
+  --ombre-2:0 6px 18px rgba(26,27,65,.09);
+  --ombre-3:0 18px 44px rgba(26,27,65,.14);
+  --sans:'Inter',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --titre:'Fredoka','Trebuchet MS',var(--sans);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){ --canvas:#15162E; --surface:#1E1F3D; --bord:#33345B; --texte:#F4EFE8; --texte-doux:#B9B6CE; }
+}
+:root[data-theme="dark"]{ --canvas:#15162E; --surface:#1E1F3D; --bord:#33345B; --texte:#F4EFE8; --texte-doux:#B9B6CE; }
+
+*{box-sizing:border-box}
+body{margin:0;background:var(--canvas);color:var(--texte);font-family:var(--sans);font-size:15px;line-height:1.6;-webkit-font-smoothing:antialiased}
+h1,h2,h3,h4{font-family:var(--titre);font-weight:600;letter-spacing:-.015em;margin:0}
+p{margin:0}
+a{color:var(--mandarine-texte)}
+img{max-width:100%}
+.wrap{max-width:1160px;margin:0 auto;padding:0 24px}
+
+/* ---------- Hero ---------- */
+.hero{padding:72px 0 46px;border-bottom:2px solid var(--texte)}
+.hero .kicker{font-family:var(--sans);font-size:12.5px;font-weight:700;letter-spacing:.16em;color:var(--mandarine-texte)}
+.hero h1{font-size:clamp(34px,6vw,62px);line-height:1.02;margin:14px 0 18px;max-width:16ch}
+.hero .lede{font-size:17px;line-height:1.6;color:var(--texte-doux);max-width:62ch}
+.hero-grid{display:flex;gap:40px;flex-wrap:wrap;align-items:flex-end;justify-content:space-between}
+.ratio{border-left:3px solid var(--mandarine);padding-left:18px;font-size:14px;line-height:1.7;color:var(--texte-doux)}
+.ratio b{display:block;font-family:var(--titre);font-size:30px;color:var(--texte);line-height:1.1}
+
+/* ---------- Sommaire ---------- */
+.toc{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:2px;background:var(--bord);border:1px solid var(--bord);border-radius:var(--r-m);overflow:hidden;margin:34px 0 10px}
+.toc a{display:flex;gap:12px;align-items:baseline;background:var(--surface);padding:14px 16px;color:var(--texte);text-decoration:none;font-size:14px;font-weight:500}
+.toc a:hover{background:var(--jaune);color:#1A1B41}
+.toc a:focus-visible{outline:3px solid var(--mandarine-fonce);outline-offset:-3px}
+.toc span{font-family:var(--titre);font-size:13px;font-weight:700;color:var(--mandarine-texte)}
+
+/* ---------- Sections ---------- */
+.task{padding:56px 0;border-top:1px solid var(--bord)}
+.task:first-of-type{border-top:none}
+.task-head{display:flex;gap:16px;align-items:baseline;flex-wrap:wrap;margin-bottom:8px}
+.tag{font-size:12px;font-weight:700;letter-spacing:.08em;background:var(--texte);color:var(--canvas);padding:5px 11px;border-radius:var(--r-pill)}
+.task h2{font-size:clamp(23px,3.4vw,31px)}
+.task .est{font-size:13px;color:var(--texte-doux);font-weight:500}
+.task > p.intro{color:var(--texte-doux);max-width:74ch;margin-bottom:26px}
+h3.sub{font-size:19px;margin:34px 0 14px}
+h4.mini{font-family:var(--sans);font-size:13px;font-weight:700;color:var(--mandarine-texte);margin:0 0 10px}
+
+.cols{display:flex;gap:22px;flex-wrap:wrap;align-items:flex-start}
+.card{flex:1 1 320px;min-width:0;background:var(--surface);border:1px solid var(--bord);border-radius:var(--r-l);padding:22px}
+.note{background:var(--surface);border:1px solid var(--bord);border-left:4px solid var(--turquoise);border-radius:var(--r-s);padding:14px 18px;font-size:14px;color:var(--texte-doux);margin-top:18px}
+.note strong{color:var(--texte)}
+.alerte{border-left-color:var(--rouge)}
+
+table{width:100%;border-collapse:collapse;font-size:13.5px}
+th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--bord);vertical-align:top}
+th{font-size:12px;font-weight:700;color:var(--texte-doux)}
+td code,code.inline{font-family:ui-monospace,'SFMono-Regular',Menlo,monospace;font-size:12.5px}
+.scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.ok{color:var(--vert-texte);font-weight:600}
+.ko{color:var(--rouge-texte);font-weight:600}
+pre{background:var(--texte);color:#F4EFE8;padding:18px;border-radius:var(--r-m);overflow-x:auto;font-family:ui-monospace,Menlo,monospace;font-size:12.5px;line-height:1.65;margin:0}
+
+
+/* ---------- Primitives de maquette (couleurs figées : ce sont des artefacts) ---------- */
+.mk{background:#FFF7EF;color:#1A1B41;border:1px solid #F0E4D7;border-radius:22px;box-shadow:var(--ombre-2);overflow:hidden;font-family:var(--sans)}
+.mk *{box-sizing:border-box}
+.mk-top{background:#1A1B41;color:#FFF7EF;padding:12px 16px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;font-size:12.5px}
+.mk-top nav{display:flex;gap:14px;flex-wrap:wrap}
+.mk-top nav span{opacity:.72}
+.mk-top nav span.on{opacity:1;border-bottom:2px solid #FFC93C;padding-bottom:2px}
+.mk-logo{font-family:var(--titre);font-size:17px;font-weight:600;letter-spacing:-.01em}
+.mk-logo i{color:#FFC93C;font-style:normal}
+.mk-body{padding:18px;display:flex;flex-direction:column;gap:16px}
+.mk h3{font-family:var(--titre);font-size:21px;margin:0}
+.mk h4{font-family:var(--sans);font-size:14.5px;font-weight:600;margin:0}
+.mk p{font-size:13.5px;line-height:1.5;color:#4C4D6B;margin:0}
+.mk small{font-size:12px;color:#6E6F91}
+.mk hr{border:none;border-top:1px solid #F0E4D7;margin:2px 0}
+.pane{background:#fff;border:1px solid #F0E4D7;border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:12px}
+.pane.manque{border-left:4px solid #FF7A3D}
+.pane.remplit{border-left:4px solid #14B8A6}
+.eyebrow{font-size:11.5px;font-weight:700;letter-spacing:.12em;color:#C2410C}
+.eyebrow.tq{color:#0F766E}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.row.top{align-items:flex-start}
+.spread{justify-content:space-between}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:700px){.two{grid-template-columns:1fr}}
+
+/* Boutons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:0 20px;border-radius:999px;font:600 14px/1 var(--sans);border:2px solid transparent;cursor:default;text-align:center}
+.b-p{background:#FF7A3D;color:#1A1B41;border-color:#E5651F}
+.b-s{background:transparent;color:#1A1B41;border-color:#1A1B41}
+.b-t{background:#14B8A6;color:#1A1B41;border-color:#0F766E}
+.b-g{background:transparent;color:#C2410C;border-color:transparent;text-decoration:underline;text-underline-offset:3px}
+.b-d{background:#FFF7EF;color:#C4302B;border-color:#C4302B}
+.b-x{background:#EDE4DA;color:#8A8497;border-color:#E0D5C9}
+.b-f{background:#FF7A3D;color:#1A1B41;border-color:#E5651F;outline:3px solid #1A1B41;outline-offset:2px}
+.b-sm{min-height:36px;padding:0 14px;font-size:13px}
+.b-full{width:100%}
+
+/* Champs */
+.fld{display:flex;flex-direction:column;gap:5px}
+.fld label{font-size:12.5px;font-weight:600}
+.fld .in{min-height:44px;background:#fff;border:1.5px solid #D9CDBF;border-radius:12px;padding:11px 14px;font-size:14px;color:#1A1B41;display:flex;align-items:center;justify-content:space-between}
+.fld .in.ph{color:#6E6F91}
+.fld .in.foc{border-color:#1A1B41;outline:3px solid #FFC93C;outline-offset:1px}
+.fld .in.err{border-color:#C4302B;background:#FFF4F3}
+.fld .hint{font-size:12px;color:#6E6F91}
+.fld .msg{font-size:12px;color:#C4302B;font-weight:600}
+.chips{display:flex;gap:8px;flex-wrap:wrap}
+.chip{min-height:36px;display:inline-flex;align-items:center;padding:0 14px;border-radius:999px;border:1.5px solid #D9CDBF;background:#fff;font-size:13px;font-weight:500}
+.chip.on{background:#1A1B41;color:#FFF7EF;border-color:#1A1B41}
+.chk{display:flex;gap:10px;align-items:flex-start;font-size:13px;line-height:1.45}
+.chk i{flex:0 0 auto;width:22px;height:22px;border:2px solid #1A1B41;border-radius:6px;display:inline-flex;align-items:center;justify-content:center;font-style:normal;font-size:13px;font-weight:700;margin-top:1px}
+.chk i.on{background:#1A1B41;color:#FFC93C}
+
+/* Badges et statuts */
+.bdg{display:inline-flex;align-items:center;gap:6px;padding:5px 11px;border-radius:999px;font-size:12px;font-weight:600;border:1.5px solid}
+.bdg-dip{background:#D9F5F1;color:#0F766E;border-color:#0F766E}
+.bdg-stg{background:#FFF3D1;color:#8A5B00;border-color:#B5840B}
+.bdg-nq{background:#EFEAE4;color:#4C4D6B;border-color:#A8A0B4}
+.bdg-hon{background:#DCF5E8;color:#0E7C4A;border-color:#0E7C4A}
+.bdg-att{background:#FFF3D1;color:#8A5B00;border-color:#B5840B}
+.bdg-blq{background:#FDE3E1;color:#C4302B;border-color:#C4302B}
+.st{display:inline-flex;align-items:center;gap:7px;padding:5px 12px;border-radius:8px;font-size:12.5px;font-weight:600;border:1.5px solid}
+.st b{font-weight:700}
+.st-bro{background:#EFEAE4;color:#4C4D6B;border-color:#A8A0B4;border-style:dashed}
+.st-ouv{background:#FFF7EF;color:#C2410C;border-color:#C2410C}
+.st-dif{background:#FFF3D1;color:#8A5B00;border-color:#B5840B}
+.st-pou{background:#DCF5E8;color:#0E7C4A;border-color:#0E7C4A}
+.st-cou{background:#D9F5F1;color:#0F766E;border-color:#0F766E}
+.st-ter{background:#EFEAE4;color:#1A1B41;border-color:#1A1B41}
+.st-ann{background:#FDE3E1;color:#C4302B;border-color:#C4302B}
+
+/* Carte créneau */
+.mc{background:#fff;border:1px solid #F0E4D7;border-radius:16px;overflow:hidden;box-shadow:var(--ombre-1)}
+.mc-h{background:#FF7A3D;color:#1A1B41;padding:9px 14px;font-size:13px;font-weight:700;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.mc-h.tq{background:#14B8A6}
+.mc-b{padding:14px;display:flex;flex-direction:column;gap:10px}
+.mc-b .titre{font-size:15px;font-weight:600}
+
+/* Alerte seuil */
+.seuil{border-radius:14px;padding:14px;display:flex;gap:12px;align-items:flex-start;border:1.5px solid}
+.seuil .pic{flex:0 0 auto;width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700}
+.s-ok{background:#DCF5E8;border-color:#0E7C4A;color:#0E7C4A}
+.s-ok .pic{background:#0E7C4A;color:#fff}
+.s-warn{background:#FFF3D1;border-color:#B5840B;color:#8A5B00}
+.s-warn .pic{background:#B5840B;color:#fff}
+.s-ko{background:#FDE3E1;border-color:#C4302B;color:#C4302B}
+.s-ko .pic{background:#C4302B;color:#fff}
+.seuil strong{display:block;font-size:14px;color:#1A1B41}
+.seuil span{font-size:12.5px;line-height:1.45;display:block;color:#4C4D6B}
+
+/* Jauge */
+.jauge{height:12px;border-radius:999px;background:#EDE4DA;overflow:hidden;display:flex}
+.jauge i{display:block;height:100%}
+.jauge .fait{background:#14B8A6}
+.jauge .att{background:repeating-linear-gradient(45deg,#FFC93C,#FFC93C 5px,#FFE39B 5px,#FFE39B 10px)}
+
+/* Planning */
+.plan{width:100%;border-collapse:collapse;font-size:11.5px}
+.plan th,.plan td{border:1px solid #F0E4D7;padding:7px 6px;text-align:center}
+.plan th{background:#FFF7EF;font-weight:600;color:#4C4D6B}
+.plan td{background:#fff;font-weight:600}
+.plan td.ok{background:#DCF5E8;color:#0E7C4A}
+.plan td.ko{background:#FDE3E1;color:#C4302B}
+.plan td.att{background:#FFF3D1;color:#8A5B00}
+.plan th.lbl{text-align:left;background:#fff}
+
+/* ---------- Wireframes ---------- */
+.wf{background:#F6F3EF;border:1.5px solid #C9C2BA;border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:10px;color:#5F584F;font-size:12px}
+.wf h5{margin:0;font:700 12px/1.3 var(--sans);color:#3D3830;letter-spacing:.02em}
+.wf .bar{height:10px;border-radius:5px;background:#D8D3CC}
+.wf .bar.s{width:45%} .wf .bar.m{width:70%} .wf .bar.l{width:100%}
+.wf .box{border:1.5px dashed #B6B0A8;border-radius:8px;padding:9px;background:#fff;font-size:11.5px}
+.wf .btnw{height:34px;border-radius:999px;background:#B6B0A8;color:#fff;display:flex;align-items:center;justify-content:center;font:600 11.5px/1 var(--sans)}
+.wf .btnw.sec{background:#fff;border:1.5px solid #B6B0A8;color:#5F584F}
+.wf .step{font:700 11px/1 var(--sans);color:#8A8176;letter-spacing:.1em}
+.flow{display:flex;gap:10px;align-items:stretch;overflow-x:auto;padding-bottom:10px}
+.flow > .wf{flex:0 0 232px}
+.flow .arrow{flex:0 0 auto;align-self:center;color:#B6B0A8;font-size:22px;font-weight:700}
+.flow .fork{flex:0 0 232px;display:flex;flex-direction:column;gap:10px}
+
+/* ---------- Devices ---------- */
+.devices{display:flex;gap:22px;align-items:flex-start;flex-wrap:wrap}
+.dev{display:flex;flex-direction:column;gap:9px}
+.dev-cap{font-size:12.5px;font-weight:600;color:var(--texte-doux)}
+.w390{width:390px;max-width:100%}
+.w768{width:520px;max-width:100%}
+.w1440{width:100%}
+
+/* ---------- Tokens T2 ---------- */
+.sw{display:flex;align-items:center;gap:12px;padding:8px 0;border-bottom:1px solid var(--bord)}
+.sw i{flex:0 0 auto;width:46px;height:46px;border-radius:12px;border:1px solid rgba(26,27,65,.12)}
+.sw .nm{font-size:13.5px;font-weight:600}
+.sw .us{font-size:12.5px;color:var(--texte-doux)}
+.scale li{list-style:none;margin:0 0 10px;padding:0;border-bottom:1px dotted var(--bord);padding-bottom:10px}
+.scale{margin:0;padding:0}
+.scale .lab{font-size:11.5px;color:var(--texte-doux);display:block;margin-top:2px}
+.sp{display:flex;align-items:center;gap:10px;margin-bottom:7px;font-size:12.5px}
+.sp i{display:block;height:14px;background:var(--mandarine);border-radius:3px}
+.rad{display:flex;gap:12px;flex-wrap:wrap}
+.rad div{width:74px;height:64px;background:var(--surface);border:1.5px solid var(--texte);display:flex;align-items:flex-end;justify-content:center;font-size:11px;padding-bottom:5px}
+.shad{display:flex;gap:14px;flex-wrap:wrap}
+.shad div{width:120px;height:72px;background:var(--surface);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:11.5px;color:var(--texte-doux)}
+.tree{font-family:ui-monospace,Menlo,monospace;font-size:12.5px;line-height:1.85;white-space:pre;overflow-x:auto;color:var(--texte)}
+.tree b{color:var(--mandarine-texte)}
+
+</style>
+</head>
+<body>
+<header class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <div class="kicker">Apik · T6 du lot design</div>
+      <h1>Il te manque 4 heures</h1>
+      <p class="lede">L'animateur consulte entre deux services, sur son téléphone. Sa question n'est pas « quelles missions existent » mais « qu'est-ce qui comble mon trou du jeudi soir ». Les quatre écrans sont construits autour de ce manque d'heures.</p>
+    </div>
+    <div class="ratio"><b>4</b>écrans<br><b>3</b>employeurs réunis dans un seul relevé</div>
+  </div>
+</header>
+<main class="wrap">
+<section class="task" id="t6">
+  <div class="task-head"><span class="tag">T6</span><h2>Maquetter les écrans animateur</h2><span class="est">4 h · terminé</span></div>
+  <p class="intro">Quatre écrans, écrits pour quelqu'un qui consulte son téléphone entre deux services. La question de l'animateur n'est pas « quelles missions existent » mais « combien d'heures me manque-t-il cette semaine, et qu'est-ce qui les comble ».</p>
+
+  <h3 class="sub">6.1 · Inscription, certifications et honorabilité</h3>
+  <div class="mk" style="max-width:860px">
+    <div class="mk-top"><span class="mk-logo">Ap<i>i</i>k</span><nav><span>1 Profil</span><span class="on">2 Certifications</span><span>3 Disponibilités</span><span>4 Compte</span></nav></div>
+    <div class="mk-body">
+      <h3>Qu'est-ce que tu peux encadrer ?</h3>
+      <p>Tes diplômes déterminent les créneaux qu'on te propose. Tu peux en ajouter plus tard.</p>
+      <div class="two">
+        <div class="pane">
+          <div class="fld"><label>Diplôme ou titre</label><div class="in">BPJEPS mention loisirs tous publics<span style="color:#6E6F91">▾</span></div></div>
+          <div class="row"><div class="fld" style="flex:1"><label>Obtenu en</label><div class="in">2021</div></div><div class="fld" style="flex:1"><label>Justificatif</label><div class="in ph">Ajouter un fichier</div></div></div>
+          <div class="fld"><label>Autres qualifications</label><div class="chips"><span class="chip on">SST</span><span class="chip">Surveillant de baignade</span><span class="chip">Permis B</span></div></div>
+          <small>Les pièces justificatives sont chiffrées et ne sont jamais visibles par les structures. Elles voient un badge, pas ton document.</small>
+        </div>
+        <div class="pane manque">
+          <div class="eyebrow">Vérification obligatoire</div>
+          <h4>Honorabilité</h4>
+          <p>Encadrer des mineurs impose une vérification auprès du service départemental. Elle prend deux à cinq jours.</p>
+          <div class="chk"><i class="on">✓</i><span>J'autorise Apik à faire vérifier mon honorabilité et je certifie l'exactitude de mes déclarations.</span></div>
+          <div class="seuil s-warn" style="margin-top:4px"><span class="pic">⧗</span><div><strong>En attente de vérification</strong><span>Tu peux déjà voir les créneaux et te positionner. Une structure ne pourra te confirmer qu'une fois la vérification revenue.</span></div></div>
+          <span class="btn b-p b-full">Continuer vers mes disponibilités</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h3 class="sub">6.2 · Mon profil</h3>
+  <div class="mk" style="max-width:860px">
+    <div class="mk-top"><span class="mk-logo">Ap<i>i</i>k</span><nav><span>Propositions</span><span>Mon agenda</span><span>Mes heures</span><span class="on">Mon profil</span></nav></div>
+    <div class="mk-body">
+      <div class="row spread top">
+        <div><h3>Sofia D.</h3><small>Rennes · se déplace jusqu'à 15 km · 4 missions chez Léo Lagrange</small></div>
+        <div class="row"><span class="bdg bdg-dip">◆ BPJEPS</span><span class="bdg bdg-dip">◆ SST</span><span class="bdg bdg-hon">✓ Honorabilité vérifiée</span></div>
+      </div>
+      <div class="two">
+        <div class="pane remplit">
+          <div class="eyebrow tq">Mes disponibilités récurrentes</div>
+          <div class="scroll"><table class="plan">
+            <tr><th class="lbl">Bloc</th><th>Lun</th><th>Mar</th><th>Mer</th><th>Jeu</th><th>Ven</th></tr>
+            <tr><th class="lbl">Matin</th><td class="ok">✓</td><td class="ok">✓</td><td>—</td><td class="ok">✓</td><td class="ok">✓</td></tr>
+            <tr><th class="lbl">Méridienne</th><td class="ok">✓</td><td class="ok">✓</td><td class="ok">✓</td><td class="ok">✓</td><td>—</td></tr>
+            <tr><th class="lbl">Soir</th><td>—</td><td class="ok">✓</td><td class="ok">✓</td><td class="ok">✓</td><td class="ok">✓</td></tr>
+          </table></div>
+          <span class="btn b-s b-sm" style="align-self:flex-start">Modifier mes disponibilités</span>
+        </div>
+        <div class="pane">
+          <div class="eyebrow">Ce que voient les structures</div>
+          <div class="mc">
+            <div class="mc-h tq">Sofia D.<span>3,1 km</span></div>
+            <div class="mc-b"><div class="titre">BPJEPS · disponible matin, midi, soir</div><small>Déjà venue 4 fois · 92 % de créneaux honorés</small></div>
+          </div>
+          <small>Ton nom, ta commune, tes badges et ton historique. Ni ton adresse exacte, ni ton téléphone, ni tes justificatifs : ils ne sont transmis qu'au moment de la confirmation.</small>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h3 class="sub">6.3 · Propositions</h3>
+  <div class="mk" style="max-width:860px">
+    <div class="mk-top"><span class="mk-logo">Ap<i>i</i>k</span><nav><span class="on">Propositions</span><span>Mon agenda</span><span>Mes heures</span><span>Mon profil</span></nav></div>
+    <div class="mk-body">
+      <div class="row spread top">
+        <div><h3>3 créneaux pour ta semaine</h3><small>Classés par ce qu'ils comblent dans ton planning, pas par date de publication.</small></div>
+        <span class="st st-ouv">◔ 4 h manquantes</span>
+      </div>
+      <div class="mc">
+        <div class="mc-h">Demain · jeudi 17 · 16h30 – 18h30<span>+ 2 h</span></div>
+        <div class="mc-b">
+          <div class="titre">Accueil du soir, enfants 6-10 ans</div>
+          <small>Assoc. Léo Lagrange · École J. Prévert · 3,1 km · 13,20 € brut</small>
+          <p>Ce créneau se colle à ta méridienne du jeudi. Tu y es déjà allée quatre fois.</p>
+          <div class="row"><span class="btn b-t b-sm">Je prends le créneau</span><span class="btn b-g b-sm">Plus tard</span></div>
+        </div>
+      </div>
+      <div class="mc">
+        <div class="mc-h">Mercredi 23 · 08h30 – 17h30<span>+ 8 h</span></div>
+        <div class="mc-b">
+          <div class="titre">Journée complète en centre de loisirs</div>
+          <small>Ville de Rennes · Centre Cleunay · 5,4 km · 13,80 € brut · réponse avant vendredi 18h</small>
+          <div class="row"><span class="btn b-t b-sm">Je prends le créneau</span><span class="btn b-g b-sm">Voir le détail</span></div>
+        </div>
+      </div>
+      <div class="mc">
+        <div class="mc-h">Lundi 21 · 11h30 – 13h30<span>+ 2 h</span></div>
+        <div class="mc-b">
+          <div class="titre">Pause méridienne, maternelle</div>
+          <small>Ville de Rennes · École Trégain · 7,2 km · 12,90 € brut</small>
+          <div class="row"><span class="btn b-t b-sm">Je prends le créneau</span><span class="btn b-g b-sm">Plus tard</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h3 class="sub">6.4 · Mes heures, trois employeurs réunis</h3>
+  <div class="mk" style="max-width:860px">
+    <div class="mk-top"><span class="mk-logo">Ap<i>i</i>k</span><nav><span>Propositions</span><span>Mon agenda</span><span class="on">Mes heures</span><span>Mon profil</span></nav></div>
+    <div class="mk-body">
+      <h3>Bonjour Sofia, il te manque 4 heures</h3>
+      <small>Semaine du 14 septembre · 3 employeurs · objectif 35 h</small>
+      <div class="row spread" style="margin-top:4px"><span style="font-weight:600">31 h confirmées</span><span style="color:#8A5B00;font-weight:600">2 h en attente</span><span style="color:#C2410C;font-weight:600">4 h à trouver</span></div>
+      <div class="jauge"><i class="fait" style="width:78%"></i><i class="att" style="width:6%"></i></div>
+      <div class="two">
+        <div class="pane remplit">
+          <div class="eyebrow tq">Par employeur</div>
+          <div class="row spread"><span>Assoc. Léo Lagrange</span><strong>14 h</strong></div>
+          <div class="row spread"><span>Ville de Rennes</span><strong>11 h</strong></div>
+          <div class="row spread"><span>Centre social Villejean</span><strong>6 h</strong></div>
+          <hr>
+          <div class="row spread"><strong>Total confirmé</strong><strong style="font-family:var(--titre);font-size:22px">31 h</strong></div>
+          <small>Relevé consolidé téléchargeable en fin de mois, tous employeurs confondus.</small>
+        </div>
+        <div class="pane manque">
+          <div class="eyebrow">Par bloc horaire</div>
+          <div class="row spread"><span>Matin · 07h30 – 08h30</span><strong>5 h · complet</strong></div>
+          <div class="row spread"><span>Méridienne · 11h30 – 13h30</span><strong>10 h · complet</strong></div>
+          <div class="row spread"><span>Soir · 16h30 – 18h30</span><strong style="color:#C2410C">6 h · 2 h libres</strong></div>
+          <div class="row spread"><span>Mercredi · journée</span><strong style="color:#C2410C">0 h · 8 h libres</strong></div>
+          <span class="btn b-p b-full">Voir les créneaux qui comblent mes trous</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
+<footer class="wrap" style="padding:34px 24px 60px;border-top:1px solid var(--bord);color:var(--texte-doux);font-size:13px">
+  Apik · projet InteriMatch · Fredoka et Inter · Mandarine Pik #FF7A3D et Turquoise Confiance #14B8A6. Le tutoiement est tenu côté animateur, le vouvoiement côté structure.
+</footer>
+</body>
+</html>

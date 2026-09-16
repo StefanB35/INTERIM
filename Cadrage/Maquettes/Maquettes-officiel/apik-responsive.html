@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Apik — Déclinaison responsive</title>
+<meta name="description" content="Le même écran d'alerte Apik décliné en 390, 768 et 1440 pixels, avec les règles de déclinaison et les invariants.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+
+:root{
+  /* Primitives de marque — identiques en clair et en sombre : les maquettes sont des artefacts */
+  --mandarine:#FF7A3D; --mandarine-fonce:#E5651F; --mandarine-texte:#C2410C;
+  --turquoise:#14B8A6; --turquoise-texte:#0F766E;
+  --jaune:#FFC93C;
+  --encre:#1A1B41; --encre-70:#4C4D6B; --encre-55:#6E6F91;
+  --creme:#FFF7EF; --creme-bord:#F0E4D7; --sable:#F3E9DE;
+  --vert:#1FB668; --vert-texte:#0E7C4A; --rouge:#F0453D; --rouge-texte:#C4302B;
+  --gris-wf:#D8D3CC; --gris-wf-fonce:#B6B0A8; --gris-wf-texte:#7A736B;
+  /* Tokens de page */
+  --canvas:#F3E9DE; --surface:#FFF7EF; --bord:#E6D9CA; --texte:#1A1B41; --texte-doux:#4C4D6B;
+  --r-s:10px; --r-m:16px; --r-l:22px; --r-pill:999px;
+  --ombre-1:0 1px 2px rgba(26,27,65,.06);
+  --ombre-2:0 6px 18px rgba(26,27,65,.09);
+  --ombre-3:0 18px 44px rgba(26,27,65,.14);
+  --sans:'Inter',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --titre:'Fredoka','Trebuchet MS',var(--sans);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){ --canvas:#15162E; --surface:#1E1F3D; --bord:#33345B; --texte:#F4EFE8; --texte-doux:#B9B6CE; }
+}
+:root[data-theme="dark"]{ --canvas:#15162E; --surface:#1E1F3D; --bord:#33345B; --texte:#F4EFE8; --texte-doux:#B9B6CE; }
+
+*{box-sizing:border-box}
+body{margin:0;background:var(--canvas);color:var(--texte);font-family:var(--sans);font-size:15px;line-height:1.6;-webkit-font-smoothing:antialiased}
+h1,h2,h3,h4{font-family:var(--titre);font-weight:600;letter-spacing:-.015em;margin:0}
+p{margin:0}
+a{color:var(--mandarine-texte)}
+img{max-width:100%}
+.wrap{max-width:1160px;margin:0 auto;padding:0 24px}
+
+/* ---------- Hero ---------- */
+.hero{padding:72px 0 46px;border-bottom:2px solid var(--texte)}
+.hero .kicker{font-family:var(--sans);font-size:12.5px;font-weight:700;letter-spacing:.16em;color:var(--mandarine-texte)}
+.hero h1{font-size:clamp(34px,6vw,62px);line-height:1.02;margin:14px 0 18px;max-width:16ch}
+.hero .lede{font-size:17px;line-height:1.6;color:var(--texte-doux);max-width:62ch}
+.hero-grid{display:flex;gap:40px;flex-wrap:wrap;align-items:flex-end;justify-content:space-between}
+.ratio{border-left:3px solid var(--mandarine);padding-left:18px;font-size:14px;line-height:1.7;color:var(--texte-doux)}
+.ratio b{display:block;font-family:var(--titre);font-size:30px;color:var(--texte);line-height:1.1}
+
+/* ---------- Sommaire ---------- */
+.toc{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:2px;background:var(--bord);border:1px solid var(--bord);border-radius:var(--r-m);overflow:hidden;margin:34px 0 10px}
+.toc a{display:flex;gap:12px;align-items:baseline;background:var(--surface);padding:14px 16px;color:var(--texte);text-decoration:none;font-size:14px;font-weight:500}
+.toc a:hover{background:var(--jaune);color:#1A1B41}
+.toc a:focus-visible{outline:3px solid var(--mandarine-fonce);outline-offset:-3px}
+.toc span{font-family:var(--titre);font-size:13px;font-weight:700;color:var(--mandarine-texte)}
+
+/* ---------- Sections ---------- */
+.task{padding:56px 0;border-top:1px solid var(--bord)}
+.task:first-of-type{border-top:none}
+.task-head{display:flex;gap:16px;align-items:baseline;flex-wrap:wrap;margin-bottom:8px}
+.tag{font-size:12px;font-weight:700;letter-spacing:.08em;background:var(--texte);color:var(--canvas);padding:5px 11px;border-radius:var(--r-pill)}
+.task h2{font-size:clamp(23px,3.4vw,31px)}
+.task .est{font-size:13px;color:var(--texte-doux);font-weight:500}
+.task > p.intro{color:var(--texte-doux);max-width:74ch;margin-bottom:26px}
+h3.sub{font-size:19px;margin:34px 0 14px}
+h4.mini{font-family:var(--sans);font-size:13px;font-weight:700;color:var(--mandarine-texte);margin:0 0 10px}
+
+.cols{display:flex;gap:22px;flex-wrap:wrap;align-items:flex-start}
+.card{flex:1 1 320px;min-width:0;background:var(--surface);border:1px solid var(--bord);border-radius:var(--r-l);padding:22px}
+.note{background:var(--surface);border:1px solid var(--bord);border-left:4px solid var(--turquoise);border-radius:var(--r-s);padding:14px 18px;font-size:14px;color:var(--texte-doux);margin-top:18px}
+.note strong{color:var(--texte)}
+.alerte{border-left-color:var(--rouge)}
+
+table{width:100%;border-collapse:collapse;font-size:13.5px}
+th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--bord);vertical-align:top}
+th{font-size:12px;font-weight:700;color:var(--texte-doux)}
+td code,code.inline{font-family:ui-monospace,'SFMono-Regular',Menlo,monospace;font-size:12.5px}
+.scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.ok{color:var(--vert-texte);font-weight:600}
+.ko{color:var(--rouge-texte);font-weight:600}
+pre{background:var(--texte);color:#F4EFE8;padding:18px;border-radius:var(--r-m);overflow-x:auto;font-family:ui-monospace,Menlo,monospace;font-size:12.5px;line-height:1.65;margin:0}
+
+
+/* ---------- Primitives de maquette (couleurs figées : ce sont des artefacts) ---------- */
+.mk{background:#FFF7EF;color:#1A1B41;border:1px solid #F0E4D7;border-radius:22px;box-shadow:var(--ombre-2);overflow:hidden;font-family:var(--sans)}
+.mk *{box-sizing:border-box}
+.mk-top{background:#1A1B41;color:#FFF7EF;padding:12px 16px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;font-size:12.5px}
+.mk-top nav{display:flex;gap:14px;flex-wrap:wrap}
+.mk-top nav span{opacity:.72}
+.mk-top nav span.on{opacity:1;border-bottom:2px solid #FFC93C;padding-bottom:2px}
+.mk-logo{font-family:var(--titre);font-size:17px;font-weight:600;letter-spacing:-.01em}
+.mk-logo i{color:#FFC93C;font-style:normal}
+.mk-body{padding:18px;display:flex;flex-direction:column;gap:16px}
+.mk h3{font-family:var(--titre);font-size:21px;margin:0}
+.mk h4{font-family:var(--sans);font-size:14.5px;font-weight:600;margin:0}
+.mk p{font-size:13.5px;line-height:1.5;color:#4C4D6B;margin:0}
+.mk small{font-size:12px;color:#6E6F91}
+.mk hr{border:none;border-top:1px solid #F0E4D7;margin:2px 0}
+.pane{background:#fff;border:1px solid #F0E4D7;border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:12px}
+.pane.manque{border-left:4px solid #FF7A3D}
+.pane.remplit{border-left:4px solid #14B8A6}
+.eyebrow{font-size:11.5px;font-weight:700;letter-spacing:.12em;color:#C2410C}
+.eyebrow.tq{color:#0F766E}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.row.top{align-items:flex-start}
+.spread{justify-content:space-between}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:700px){.two{grid-template-columns:1fr}}
+
+/* Boutons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:0 20px;border-radius:999px;font:600 14px/1 var(--sans);border:2px solid transparent;cursor:default;text-align:center}
+.b-p{background:#FF7A3D;color:#1A1B41;border-color:#E5651F}
+.b-s{background:transparent;color:#1A1B41;border-color:#1A1B41}
+.b-t{background:#14B8A6;color:#1A1B41;border-color:#0F766E}
+.b-g{background:transparent;color:#C2410C;border-color:transparent;text-decoration:underline;text-underline-offset:3px}
+.b-d{background:#FFF7EF;color:#C4302B;border-color:#C4302B}
+.b-x{background:#EDE4DA;color:#8A8497;border-color:#E0D5C9}
+.b-f{background:#FF7A3D;color:#1A1B41;border-color:#E5651F;outline:3px solid #1A1B41;outline-offset:2px}
+.b-sm{min-height:36px;padding:0 14px;font-size:13px}
+.b-full{width:100%}
+
+/* Champs */
+.fld{display:flex;flex-direction:column;gap:5px}
+.fld label{font-size:12.5px;font-weight:600}
+.fld .in{min-height:44px;background:#fff;border:1.5px solid #D9CDBF;border-radius:12px;padding:11px 14px;font-size:14px;color:#1A1B41;display:flex;align-items:center;justify-content:space-between}
+.fld .in.ph{color:#6E6F91}
+.fld .in.foc{border-color:#1A1B41;outline:3px solid #FFC93C;outline-offset:1px}
+.fld .in.err{border-color:#C4302B;background:#FFF4F3}
+.fld .hint{font-size:12px;color:#6E6F91}
+.fld .msg{font-size:12px;color:#C4302B;font-weight:600}
+.chips{display:flex;gap:8px;flex-wrap:wrap}
+.chip{min-height:36px;display:inline-flex;align-items:center;padding:0 14px;border-radius:999px;border:1.5px solid #D9CDBF;background:#fff;font-size:13px;font-weight:500}
+.chip.on{background:#1A1B41;color:#FFF7EF;border-color:#1A1B41}
+.chk{display:flex;gap:10px;align-items:flex-start;font-size:13px;line-height:1.45}
+.chk i{flex:0 0 auto;width:22px;height:22px;border:2px solid #1A1B41;border-radius:6px;display:inline-flex;align-items:center;justify-content:center;font-style:normal;font-size:13px;font-weight:700;margin-top:1px}
+.chk i.on{background:#1A1B41;color:#FFC93C}
+
+/* Badges et statuts */
+.bdg{display:inline-flex;align-items:center;gap:6px;padding:5px 11px;border-radius:999px;font-size:12px;font-weight:600;border:1.5px solid}
+.bdg-dip{background:#D9F5F1;color:#0F766E;border-color:#0F766E}
+.bdg-stg{background:#FFF3D1;color:#8A5B00;border-color:#B5840B}
+.bdg-nq{background:#EFEAE4;color:#4C4D6B;border-color:#A8A0B4}
+.bdg-hon{background:#DCF5E8;color:#0E7C4A;border-color:#0E7C4A}
+.bdg-att{background:#FFF3D1;color:#8A5B00;border-color:#B5840B}
+.bdg-blq{background:#FDE3E1;color:#C4302B;border-color:#C4302B}
+.st{display:inline-flex;align-items:center;gap:7px;padding:5px 12px;border-radius:8px;font-size:12.5px;font-weight:600;border:1.5px solid}
+.st b{font-weight:700}
+.st-bro{background:#EFEAE4;color:#4C4D6B;border-color:#A8A0B4;border-style:dashed}
+.st-ouv{background:#FFF7EF;color:#C2410C;border-color:#C2410C}
+.st-dif{background:#FFF3D1;color:#8A5B00;border-color:#B5840B}
+.st-pou{background:#DCF5E8;color:#0E7C4A;border-color:#0E7C4A}
+.st-cou{background:#D9F5F1;color:#0F766E;border-color:#0F766E}
+.st-ter{background:#EFEAE4;color:#1A1B41;border-color:#1A1B41}
+.st-ann{background:#FDE3E1;color:#C4302B;border-color:#C4302B}
+
+/* Carte créneau */
+.mc{background:#fff;border:1px solid #F0E4D7;border-radius:16px;overflow:hidden;box-shadow:var(--ombre-1)}
+.mc-h{background:#FF7A3D;color:#1A1B41;padding:9px 14px;font-size:13px;font-weight:700;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.mc-h.tq{background:#14B8A6}
+.mc-b{padding:14px;display:flex;flex-direction:column;gap:10px}
+.mc-b .titre{font-size:15px;font-weight:600}
+
+/* Alerte seuil */
+.seuil{border-radius:14px;padding:14px;display:flex;gap:12px;align-items:flex-start;border:1.5px solid}
+.seuil .pic{flex:0 0 auto;width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700}
+.s-ok{background:#DCF5E8;border-color:#0E7C4A;color:#0E7C4A}
+.s-ok .pic{background:#0E7C4A;color:#fff}
+.s-warn{background:#FFF3D1;border-color:#B5840B;color:#8A5B00}
+.s-warn .pic{background:#B5840B;color:#fff}
+.s-ko{background:#FDE3E1;border-color:#C4302B;color:#C4302B}
+.s-ko .pic{background:#C4302B;color:#fff}
+.seuil strong{display:block;font-size:14px;color:#1A1B41}
+.seuil span{font-size:12.5px;line-height:1.45;display:block;color:#4C4D6B}
+
+/* Jauge */
+.jauge{height:12px;border-radius:999px;background:#EDE4DA;overflow:hidden;display:flex}
+.jauge i{display:block;height:100%}
+.jauge .fait{background:#14B8A6}
+.jauge .att{background:repeating-linear-gradient(45deg,#FFC93C,#FFC93C 5px,#FFE39B 5px,#FFE39B 10px)}
+
+/* Planning */
+.plan{width:100%;border-collapse:collapse;font-size:11.5px}
+.plan th,.plan td{border:1px solid #F0E4D7;padding:7px 6px;text-align:center}
+.plan th{background:#FFF7EF;font-weight:600;color:#4C4D6B}
+.plan td{background:#fff;font-weight:600}
+.plan td.ok{background:#DCF5E8;color:#0E7C4A}
+.plan td.ko{background:#FDE3E1;color:#C4302B}
+.plan td.att{background:#FFF3D1;color:#8A5B00}
+.plan th.lbl{text-align:left;background:#fff}
+
+/* ---------- Wireframes ---------- */
+.wf{background:#F6F3EF;border:1.5px solid #C9C2BA;border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:10px;color:#5F584F;font-size:12px}
+.wf h5{margin:0;font:700 12px/1.3 var(--sans);color:#3D3830;letter-spacing:.02em}
+.wf .bar{height:10px;border-radius:5px;background:#D8D3CC}
+.wf .bar.s{width:45%} .wf .bar.m{width:70%} .wf .bar.l{width:100%}
+.wf .box{border:1.5px dashed #B6B0A8;border-radius:8px;padding:9px;background:#fff;font-size:11.5px}
+.wf .btnw{height:34px;border-radius:999px;background:#B6B0A8;color:#fff;display:flex;align-items:center;justify-content:center;font:600 11.5px/1 var(--sans)}
+.wf .btnw.sec{background:#fff;border:1.5px solid #B6B0A8;color:#5F584F}
+.wf .step{font:700 11px/1 var(--sans);color:#8A8176;letter-spacing:.1em}
+.flow{display:flex;gap:10px;align-items:stretch;overflow-x:auto;padding-bottom:10px}
+.flow > .wf{flex:0 0 232px}
+.flow .arrow{flex:0 0 auto;align-self:center;color:#B6B0A8;font-size:22px;font-weight:700}
+.flow .fork{flex:0 0 232px;display:flex;flex-direction:column;gap:10px}
+
+/* ---------- Devices ---------- */
+.devices{display:flex;gap:22px;align-items:flex-start;flex-wrap:wrap}
+.dev{display:flex;flex-direction:column;gap:9px}
+.dev-cap{font-size:12.5px;font-weight:600;color:var(--texte-doux)}
+.w390{width:390px;max-width:100%}
+.w768{width:520px;max-width:100%}
+.w1440{width:100%}
+
+/* ---------- Tokens T2 ---------- */
+.sw{display:flex;align-items:center;gap:12px;padding:8px 0;border-bottom:1px solid var(--bord)}
+.sw i{flex:0 0 auto;width:46px;height:46px;border-radius:12px;border:1px solid rgba(26,27,65,.12)}
+.sw .nm{font-size:13.5px;font-weight:600}
+.sw .us{font-size:12.5px;color:var(--texte-doux)}
+.scale li{list-style:none;margin:0 0 10px;padding:0;border-bottom:1px dotted var(--bord);padding-bottom:10px}
+.scale{margin:0;padding:0}
+.scale .lab{font-size:11.5px;color:var(--texte-doux);display:block;margin-top:2px}
+.sp{display:flex;align-items:center;gap:10px;margin-bottom:7px;font-size:12.5px}
+.sp i{display:block;height:14px;background:var(--mandarine);border-radius:3px}
+.rad{display:flex;gap:12px;flex-wrap:wrap}
+.rad div{width:74px;height:64px;background:var(--surface);border:1.5px solid var(--texte);display:flex;align-items:flex-end;justify-content:center;font-size:11px;padding-bottom:5px}
+.shad{display:flex;gap:14px;flex-wrap:wrap}
+.shad div{width:120px;height:72px;background:var(--surface);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:11.5px;color:var(--texte-doux)}
+.tree{font-family:ui-monospace,Menlo,monospace;font-size:12.5px;line-height:1.85;white-space:pre;overflow-x:auto;color:var(--texte)}
+.tree b{color:var(--mandarine-texte)}
+
+</style>
+</head>
+<body>
+<header class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <div class="kicker">Apik · T7 du lot design</div>
+      <h1>Le même écran, trois largeurs</h1>
+      <p class="lede">La directrice qui reçoit l'alerte à 6h45 est sur son téléphone et doit décider avec les mêmes éléments qu'à son bureau. Rien n'est retiré en mobile : replié, jamais supprimé.</p>
+    </div>
+    <div class="ratio"><b>390</b>mobile<br><b>768</b>tablette<br><b>1440</b>poste de travail</div>
+  </div>
+</header>
+<main class="wrap">
+<section class="task" id="t7">
+  <div class="task-head"><span class="tag">T7</span><h2>Décliner les maquettes en responsive</h2><span class="est">3 h · terminé</span></div>
+  <p class="intro">Trois largeurs de référence, imposées par le sujet : 390 pour le mobile, 768 pour la tablette, 1440 pour le poste de travail. Le même écran, l'alerte du soir côté structure, décliné sur les trois.</p>
+
+  <div class="devices">
+    <div class="dev">
+      <span class="dev-cap">Mobile · 390 px</span>
+      <div class="mk w390">
+        <div class="mk-top"><span class="mk-logo">Ap<i>i</i>k</span><span style="margin-left:auto">Rennes</span></div>
+        <div class="mk-body" style="padding:14px;gap:12px">
+          <div class="seuil s-ko"><span class="pic">⚠</span><div><strong>Il te manque 1 animateur</strong><span>Demain jeudi, soir, 16h30 – 18h30. Sans remplacement, 14 enfants ne peuvent pas être accueillis.</span></div></div>
+          <span class="btn b-p b-full">Voir les 3 réponses</span>
+          <hr>
+          <div class="row spread" style="font-size:12.5px;font-weight:600"><span>Matin</span><span style="color:#C4302B">5 / 6 ⚠</span></div>
+          <div class="row spread" style="font-size:12.5px;font-weight:600"><span>Méridienne</span><span style="color:#8A5B00">11 / 12 ⧗</span></div>
+          <div class="row spread" style="font-size:12.5px;font-weight:600"><span>Soir</span><span style="color:#C4302B">5 / 6 ⚠</span></div>
+          <div class="mk-top" style="margin:8px -14px -14px;border-radius:0;justify-content:space-around;font-size:11.5px"><span class="on">Planning</span><span>Équipe</span><span>Contrats</span><span>Réglages</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="dev">
+      <span class="dev-cap">Tablette · 768 px</span>
+      <div class="mk w768">
+        <div class="mk-top"><span class="mk-logo">Ap<i>i</i>k</span><nav><span class="on">Planning</span><span>Équipe</span><span>Contrats</span></nav></div>
+        <div class="mk-body" style="padding:16px;gap:14px">
+          <div class="row spread top"><div><h3 style="font-size:19px">Semaine du 14 septembre</h3><small>PEDT actif · 214 enfants</small></div><span class="st st-ann">⚠ 2 hors-taux</span></div>
+          <div class="scroll"><table class="plan">
+            <tr><th class="lbl">Bloc</th><th>Lun</th><th>Mar</th><th>Mer</th><th>Jeu</th><th>Ven</th></tr>
+            <tr><th class="lbl">Matin</th><td class="ok">6/6</td><td class="ok">6/6</td><td class="ok">4/4</td><td class="ko">5/6</td><td class="ok">6/6</td></tr>
+            <tr><th class="lbl">Midi</th><td class="ok">12/12</td><td class="ok">12/12</td><td class="ok">4/4</td><td class="att">11/12</td><td class="ok">12/12</td></tr>
+            <tr><th class="lbl">Soir</th><td class="ok">6/6</td><td class="ok">6/6</td><td class="ok">4/4</td><td class="ko">5/6</td><td class="ok">6/6</td></tr>
+          </table></div>
+          <div class="pane manque" style="padding:12px">
+            <div class="eyebrow">Ce qui manque</div>
+            <div class="row spread top"><span style="font-size:13px">Jeudi 17 · matin et soir · 1 animateur par bloc</span><span class="btn b-p b-sm">Publier les 2 créneaux</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="dev" style="margin-top:22px">
+    <span class="dev-cap">Poste de travail · 1440 px, deux colonnes</span>
+    <div class="mk w1440">
+      <div class="mk-top"><span class="mk-logo">Ap<i>i</i>k</span><nav><span class="on">Planning</span><span>Créneaux publiés</span><span>Mon équipe</span><span>Contrats</span></nav><span style="margin-left:auto">Assoc. Léo Lagrange</span></div>
+      <div class="mk-body">
+        <div class="two">
+          <div class="pane manque">
+            <div class="eyebrow">Ce qui manque</div>
+            <div class="seuil s-ko"><span class="pic">⚠</span><div><strong>Jeudi 17, matin et soir</strong><span>5 animateurs confirmés sur 6 requis, sur chacun des deux blocs.</span></div></div>
+            <div class="row"><span class="btn b-p b-sm">Publier les 2 créneaux</span><span class="btn b-s b-sm">Réduire l'effectif</span></div>
+          </div>
+          <div class="pane remplit">
+            <div class="eyebrow tq">Ce qui se remplit</div>
+            <div class="row spread top"><div><h4>Sofia D. — 94 / 100</h4><small>BPJEPS · 3,1 km · déjà venue 4 fois</small></div><span class="btn b-p b-sm">Confirmer</span></div>
+            <hr>
+            <div class="row spread top"><div><h4>Malik K. — 81 / 100</h4><small>BAFA · 6,8 km · première mission</small></div><span class="btn b-s b-sm">Confirmer</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="cols" style="margin-top:26px">
+    <div class="card">
+      <h4 class="mini">Règles de déclinaison</h4>
+      <div class="scroll"><table>
+        <tr><th>Élément</th><th>390</th><th>768</th><th>1440</th></tr>
+        <tr><td>Navigation</td><td>Barre basse, 4 entrées</td><td>Barre haute, 3 entrées</td><td>Barre haute complète</td></tr>
+        <tr><td>Manque / remplit</td><td>Empilé, le manque en premier</td><td>Empilé, planning intercalé</td><td>Deux colonnes côte à côte</td></tr>
+        <tr><td>Planning</td><td>Liste par bloc</td><td>Grille défilante</td><td>Grille entière</td></tr>
+        <tr><td>Boutons</td><td>Pleine largeur</td><td>Largeur du contenu</td><td>Largeur du contenu</td></tr>
+        <tr><td>Marge intérieure</td><td>14 px</td><td>16 px</td><td>18 px</td></tr>
+      </table></div>
+    </div>
+    <div class="card" style="flex:0 1 340px">
+      <h4 class="mini">Invariants sur les trois largeurs</h4>
+      <p style="font-size:13.5px;color:var(--texte-doux)">L'alerte de seuil est toujours le premier élément lu. Une seule action primaire. Aucune information n'est retirée en mobile : elle est repliée, jamais supprimée, parce que la directrice qui reçoit l'alerte à 6h45 est sur son téléphone et doit décider avec les mêmes éléments qu'au bureau.</p>
+      <p style="font-size:13.5px;color:var(--texte-doux);margin-top:10px">Le tableau de planning est le seul élément qui défile horizontalement, dans son propre conteneur. Le corps de page ne défile jamais latéralement.</p>
+    </div>
+  </div>
+</section>
+</main>
+<footer class="wrap" style="padding:34px 24px 60px;border-top:1px solid var(--bord);color:var(--texte-doux);font-size:13px">
+  Apik · projet InteriMatch · Fredoka et Inter · Mandarine Pik #FF7A3D et Turquoise Confiance #14B8A6. Largeurs de référence imposées par le sujet.
+</footer>
+</body>
+</html>

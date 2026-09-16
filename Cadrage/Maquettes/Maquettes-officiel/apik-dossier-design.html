@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Apik — Dossier de design</title>
+<meta name="description" content="Les huit livrables de design de la plateforme Apik : arborescence Figma, variables, bibliothèque de composants, wireframes, écrans structure et animateur, responsive et accessibilité.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  /* Primitives de marque — identiques en clair et en sombre : les maquettes sont des artefacts */
+  --mandarine:#FF7A3D; --mandarine-fonce:#E5651F; --mandarine-texte:#C2410C;
+  --turquoise:#14B8A6; --turquoise-texte:#0F766E;
+  --jaune:#FFC93C;
+  --encre:#1A1B41; --encre-70:#4C4D6B; --encre-55:#6E6F91;
+  --creme:#FFF7EF; --creme-bord:#F0E4D7; --sable:#F3E9DE;
+  --vert:#1FB668; --vert-texte:#0E7C4A; --rouge:#F0453D; --rouge-texte:#C4302B;
+  --gris-wf:#D8D3CC; --gris-wf-fonce:#B6B0A8; --gris-wf-texte:#7A736B;
+  /* Tokens de page */
+  --canvas:#F3E9DE; --surface:#FFF7EF; --bord:#E6D9CA; --texte:#1A1B41; --texte-doux:#4C4D6B;
+  --r-s:10px; --r-m:16px; --r-l:22px; --r-pill:999px;
+  --ombre-1:0 1px 2px rgba(26,27,65,.06);
+  --ombre-2:0 6px 18px rgba(26,27,65,.09);
+  --ombre-3:0 18px 44px rgba(26,27,65,.14);
+  --sans:'Inter',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --titre:'Fredoka','Trebuchet MS',var(--sans);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){ --canvas:#15162E; --surface:#1E1F3D; --bord:#33345B; --texte:#F4EFE8; --texte-doux:#B9B6CE; }
+}
+:root[data-theme="dark"]{ --canvas:#15162E; --surface:#1E1F3D; --bord:#33345B; --texte:#F4EFE8; --texte-doux:#B9B6CE; }
+
+*{box-sizing:border-box}
+body{margin:0;background:var(--canvas);color:var(--texte);font-family:var(--sans);font-size:15px;line-height:1.6;-webkit-font-smoothing:antialiased}
+h1,h2,h3,h4{font-family:var(--titre);font-weight:600;letter-spacing:-.015em;margin:0}
+p{margin:0}
+a{color:var(--mandarine-texte)}
+img{max-width:100%}
+.wrap{max-width:1160px;margin:0 auto;padding:0 24px}
+
+/* ---------- Hero ---------- */
+.hero{padding:72px 0 46px;border-bottom:2px solid var(--texte)}
+.hero .kicker{font-family:var(--sans);font-size:12.5px;font-weight:700;letter-spacing:.16em;color:var(--mandarine-texte)}
+.hero h1{font-size:clamp(34px,6vw,62px);line-height:1.02;margin:14px 0 18px;max-width:16ch}
+.hero .lede{font-size:17px;line-height:1.6;color:var(--texte-doux);max-width:62ch}
+.hero-grid{display:flex;gap:40px;flex-wrap:wrap;align-items:flex-end;justify-content:space-between}
+.ratio{border-left:3px solid var(--mandarine);padding-left:18px;font-size:14px;line-height:1.7;color:var(--texte-doux)}
+.ratio b{display:block;font-family:var(--titre);font-size:30px;color:var(--texte);line-height:1.1}
+
+/* ---------- Sommaire ---------- */
+.toc{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:2px;background:var(--bord);border:1px solid var(--bord);border-radius:var(--r-m);overflow:hidden;margin:34px 0 10px}
+.toc a{display:flex;gap:12px;align-items:baseline;background:var(--surface);padding:14px 16px;color:var(--texte);text-decoration:none;font-size:14px;font-weight:500}
+.toc a:hover{background:var(--jaune);color:#1A1B41}
+.toc a:focus-visible{outline:3px solid var(--mandarine-fonce);outline-offset:-3px}
+.toc span{font-family:var(--titre);font-size:13px;font-weight:700;color:var(--mandarine-texte)}
+
+/* ---------- Sections ---------- */
+.task{padding:56px 0;border-top:1px solid var(--bord)}
+.task:first-of-type{border-top:none}
+.task-head{display:flex;gap:16px;align-items:baseline;flex-wrap:wrap;margin-bottom:8px}
+.tag{font-size:12px;font-weight:700;letter-spacing:.08em;background:var(--texte);color:var(--canvas);padding:5px 11px;border-radius:var(--r-pill)}
+.task h2{font-size:clamp(23px,3.4vw,31px)}
+.task .est{font-size:13px;color:var(--texte-doux);font-weight:500}
+.task > p.intro{color:var(--texte-doux);max-width:74ch;margin-bottom:26px}
+h3.sub{font-size:19px;margin:34px 0 14px}
+h4.mini{font-family:var(--sans);font-size:13px;font-weight:700;color:var(--mandarine-texte);margin:0 0 10px}
+
+.cols{display:flex;gap:22px;flex-wrap:wrap;align-items:flex-start}
+.card{flex:1 1 320px;min-width:0;background:var(--surface);border:1px solid var(--bord);border-radius:var(--r-l);padding:22px}
+.note{background:var(--surface);border:1px solid var(--bord);border-left:4px solid var(--turquoise);border-radius:var(--r-s);padding:14px 18px;font-size:14px;color:var(--texte-doux);margin-top:18px}
+.note strong{color:var(--texte)}
+.alerte{border-left-color:var(--rouge)}
+
+table{width:100%;border-collapse:collapse;font-size:13.5px}
+th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--bord);vertical-align:top}
+th{font-size:12px;font-weight:700;color:var(--texte-doux)}
+td code,code.inline{font-family:ui-monospace,'SFMono-Regular',Menlo,monospace;font-size:12.5px}
+.scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.ok{color:var(--vert-texte);font-weight:600}
+.ko{color:var(--rouge-texte);font-weight:600}
+pre{background:var(--texte);color:#F4EFE8;padding:18px;border-radius:var(--r-m);overflow-x:auto;font-family:ui-monospace,Menlo,monospace;font-size:12.5px;line-height:1.65;margin:0}
+</style>
+</head>
+<body>
+<header class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <div class="kicker">Apik · lot design du cahier des charges</div>
+      <h1>Il manque un animateur à 7h30</h1>
+      <p class="lede">Une école qui passe sous son taux d'encadrement à l'ouverture renvoie des enfants chez eux. Un animateur qui cumule trois employeurs n'atteint jamais ses 35 heures. Apik relie les deux au créneau près. Ce dossier rassemble les huit livrables de design de la liste ClickUp, du fichier Figma jusqu'au contrôle d'accessibilité.</p>
+    </div>
+    <div class="ratio">
+      <b>1 / 14</b>
+      moins de 6 ans, PEDT actif<br>
+      <b>1 / 18</b>
+      6 ans et plus, PEDT actif
+    </div>
+  </div>
+</header>
+<main class="wrap">
+  <nav class="toc" aria-label="Sommaire des livrables">
+    <a href="#t1"><span>T1</span>Fichier Figma et arborescence</a>
+    <a href="#t2"><span>T2</span>Styles et variables</a>
+    <a href="#t3"><span>T3</span>Bibliothèque de composants</a>
+    <a href="#t4"><span>T4</span>Wireframes des parcours critiques</a>
+    <a href="#t5"><span>T5</span>Écrans structure</a>
+    <a href="#t6"><span>T6</span>Écrans animateur</a>
+    <a href="#t7"><span>T7</span>Déclinaison responsive</a>
+    <a href="#t8"><span>T8</span>Contrôle d'accessibilité</a>
+  </nav>
+<style>
+/* ---------- Primitives de maquette (couleurs figées : ce sont des artefacts) ---------- */
+.mk{background:#FFF7EF;color:#1A1B41;border:1px solid #F0E4D7;border-radius:22px;box-shadow:var(--ombre-2);overflow:hidden;font-family:var(--sans)}
+.mk *{box-sizing:border-box}
+.mk-top{background:#1A1B41;color:#FFF7EF;padding:12px 16px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;font-size:12.5px}
+.mk-top nav{display:flex;gap:14px;flex-wrap:wrap}
+.mk-top nav span{opacity:.72}
+.mk-top nav span.on{opacity:1;border-bottom:2px solid #FFC93C;padding-bottom:2px}
+.mk-logo{font-family:var(--titre);font-size:17px;font-weight:600;letter-spacing:-.01em}
+.mk-logo i{color:#FFC93C;font-style:normal}
+.mk-body{padding:18px;display:flex;flex-direction:column;gap:16px}
+.mk h3{font-family:var(--titre);font-size:21px;margin:0}
+.mk h4{font-family:var(--sans);font-size:14.5px;font-weight:600;margin:0}
+.mk p{font-size:13.5px;line-height:1.5;color:#4C4D6B;margin:0}
+.mk small{font-size:12px;color:#6E6F91}
+.mk hr{border:none;border-top:1px solid #F0E4D7;margin:2px 0}
+.pane{background:#fff;border:1px solid #F0E4D7;border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:12px}
+.pane.manque{border-left:4px solid #FF7A3D}
+.pane.remplit{border-left:4px solid #14B8A6}
+.eyebrow{font-size:11.5px;font-weight:700;letter-spacing:.12em;color:#C2410C}
+.eyebrow.tq{color:#0F766E}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.row.top{align-items:flex-start}
+.spread{justify-content:space-between}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:700px){.two{grid-template-columns:1fr}}
+
+/* Boutons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:0 20px;border-radius:999px;font:600 14px/1 var(--sans);border:2px solid transparent;cursor:default;text-align:center}
+.b-p{background:#FF7A3D;color:#1A1B41;border-color:#E5651F}
+.b-s{background:transparent;color:#1A1B41;border-color:#1A1B41}
+.b-t{background:#14B8A6;color:#1A1B41;border-color:#0F766E}
+.b-g{background:transparent;color:#C2410C;border-color:transparent;text-decoration:underline;text-underline-offset:3px}
+.b-d{background:#FFF7EF;color:#C4302B;border-color:#C4302B}
+.b-x{background:#EDE4DA;color:#8A8497;border-color:#E0D5C9}
+.b-f{background:#FF7A3D;color:#1A1B41;border-color:#E5651F;outline:3px solid #1A1B41;outline-offset:2px}
+.b-sm{min-height:36px;padding:0 14px;font-size:13px}
+.b-full{width:100%}
+
+/* Champs */
+.fld{display:flex;flex-direction:column;gap:5px}
+.fld label{font-size:12.5px;font-weight:600}
+.fld .in{min-height:44px;background:#fff;border:1.5px solid #D9CDBF;border-radius:12px;padding:11px 14px;font-size:14px;color:#1A1B41;display:flex;align-items:center;justify-content:space-between}
+.fld .in.ph{color:#6E6F91}
+.fld .in.foc{border-color:#1A1B41;outline:3px solid #FFC93C;outline-offset:1px}
+.fld .in.err{border-color:#C4302B;background:#FFF4F3}
+.fld .hint{font-size:12px;color:#6E6F91}
+.fld .msg{font-size:12px;color:#C4302B;font-weight:600}
+.chips{display:flex;gap:8px;flex-wrap:wrap}
+.chip{min-height:36px;display:inline-flex;align-items:center;padding:0 14px;border-radius:999px;border:1.5px solid #D9CDBF;background:#fff;font-size:13px;font-weight:500}
+.chip.on{background:#1A1B41;color:#FFF7EF;border-color:#1A1B41}
+.chk{display:flex;gap:10px;align-items:flex-start;font-size:13px;line-height:1.45}
+.chk i{flex:0 0 auto;width:22px;height:22px;border:2px solid #1A1B41;border-radius:6px;display:inline-flex;align-items:center;justify-content:center;font-style:normal;font-size:13px;font-weight:700;margin-top:1px}
+.chk i.on{background:#1A1B41;color:#FFC93C}
+
+/* Badges et statuts */
+.bdg{display:inline-flex;align-items:center;gap:6px;padding:5px 11px;border-radius:999px;font-size:12px;font-weight:600;border:1.5px solid}
+.bdg-dip{background:#D9F5F1;color:#0F766E;border-color:#0F766E}
+.bdg-stg{background:#FFF3D1;color:#8A5B00;border-color:#B5840B}
+.bdg-nq{background:#EFEAE4;color:#4C4D6B;border-color:#A8A0B4}
+.bdg-hon{background:#DCF5E8;color:#0E7C4A;border-color:#0E7C4A}
+.bdg-att{background:#FFF3D1;color:#8A5B00;border-color:#B5840B}
+.bdg-blq{background:#FDE3E1;color:#C4302B;border-color:#C4302B}
+.st{display:inline-flex;align-items:center;gap:7px;padding:5px 12px;border-radius:8px;font-size:12.5px;font-weight:600;border:1.5px solid}
+.st b{font-weight:700}
+.st-bro{background:#EFEAE4;color:#4C4D6B;border-color:#A8A0B4;border-style:dashed}
+.st-ouv{background:#FFF7EF;color:#C2410C;border-color:#C2410C}
+.st-dif{background:#FFF3D1;color:#8A5B00;border-color:#B5840B}
+.st-pou{background:#DCF5E8;color:#0E7C4A;border-color:#0E7C4A}
+.st-cou{background:#D9F5F1;color:#0F766E;border-color:#0F766E}
+.st-ter{background:#EFEAE4;color:#1A1B41;border-color:#1A1B41}
+.st-ann{background:#FDE3E1;color:#C4302B;border-color:#C4302B}
+
+/* Carte créneau */
+.mc{background:#fff;border:1px solid #F0E4D7;border-radius:16px;overflow:hidden;box-shadow:var(--ombre-1)}
+.mc-h{background:#FF7A3D;color:#1A1B41;padding:9px 14px;font-size:13px;font-weight:700;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.mc-h.tq{background:#14B8A6}
+.mc-b{padding:14px;display:flex;flex-direction:column;gap:10px}
+.mc-b .titre{font-size:15px;font-weight:600}
+
+/* Alerte seuil */
+.seuil{border-radius:14px;padding:14px;display:flex;gap:12px;align-items:flex-start;border:1.5px solid}
+.seuil .pic{flex:0 0 auto;width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700}
+.s-ok{background:#DCF5E8;border-color:#0E7C4A;color:#0E7C4A}
+.s-ok .pic{background:#0E7C4A;color:#fff}
+.s-warn{background:#FFF3D1;border-color:#B5840B;color:#8A5B00}
+.s-warn .pic{background:#B5840B;color:#fff}
+.s-ko{background:#FDE3E1;border-color:#C4302B;color:#C4302B}
+.s-ko .pic{background:#C4302B;color:#fff}
+.seuil strong{display:block;font-size:14px;color:#1A1B41}
+.seuil span{font-size:12.5px;line-height:1.45;display:block;color:#4C4D6B}
+
+/* Jauge */
+.jauge{height:12px;border-radius:999px;background:#EDE4DA;overflow:hidden;display:flex}
+.jauge i{display:block;height:100%}
+.jauge .fait{background:#14B8A6}
+.jauge .att{background:repeating-linear-gradient(45deg,#FFC93C,#FFC93C 5px,#FFE39B 5px,#FFE39B 10px)}
+
+/* Planning */
+.plan{width:100%;border-collapse:collapse;font-size:11.5px}
+.plan th,.plan td{border:1px solid #F0E4D7;padding:7px 6px;text-align:center}
+.plan th{background:#FFF7EF;font-weight:600;color:#4C4D6B}
+.plan td{background:#fff;font-weight:600}
+.plan td.ok{background:#DCF5E8;color:#0E7C4A}
+.plan td.ko{background:#FDE3E1;color:#C4302B}
+.plan td.att{background:#FFF3D1;color:#8A5B00}
+.plan th.lbl{text-align:left;background:#fff}
+
+/* ---------- Wireframes ---------- */
+.wf{background:#F6F3EF;border:1.5px solid #C9C2BA;border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:10px;color:#5F584F;font-size:12px}
+.wf h5{margin:0;font:700 12px/1.3 var(--sans);color:#3D3830;letter-spacing:.02em}
+.wf .bar{height:10px;border-radius:5px;background:#D8D3CC}
+.wf .bar.s{width:45%} .wf .bar.m{width:70%} .wf .bar.l{width:100%}
+.wf .box{border:1.5px dashed #B6B0A8;border-radius:8px;padding:9px;background:#fff;font-size:11.5px}
+.wf .btnw{height:34px;border-radius:999px;background:#B6B0A8;color:#fff;display:flex;align-items:center;justify-content:center;font:600 11.5px/1 var(--sans)}
+.wf .btnw.sec{background:#fff;border:1.5px solid #B6B0A8;color:#5F584F}
+.wf .step{font:700 11px/1 var(--sans);color:#8A8176;letter-spacing:.1em}
+.flow{display:flex;gap:10px;align-items:stretch;overflow-x:auto;padding-bottom:10px}
+.flow > .wf{flex:0 0 232px}
+.flow .arrow{flex:0 0 auto;align-self:center;color:#B6B0A8;font-size:22px;font-weight:700}
+.flow .fork{flex:0 0 232px;display:flex;flex-direction:column;gap:10px}
+
+/* ---------- Devices ---------- */
+.devices{display:flex;gap:22px;align-items:flex-start;flex-wrap:wrap}
+.dev{display:flex;flex-direction:column;gap:9px}
+.dev-cap{font-size:12.5px;font-weight:600;color:var(--texte-doux)}
+.w390{width:390px;max-width:100%}
+.w768{width:520px;max-width:100%}
+.w1440{width:100%}
+
+/* ---------- Tokens T2 ---------- */
+.sw{display:flex;align-items:center;gap:12px;padding:8px 0;border-bottom:1px solid var(--bord)}
+.sw i{flex:0 0 auto;width:46px;height:46px;border-radius:12px;border:1px solid rgba(26,27,65,.12)}
+.sw .nm{font-size:13.5px;font-weight:600}
+.sw .us{font-size:12.5px;color:var(--texte-doux)}
+.scale li{list-style:none;margin:0 0 10px;padding:0;border-bottom:1px dotted var(--bord);padding-bottom:10px}
+.scale{margin:0;padding:0}
+.scale .lab{font-size:11.5px;color:var(--texte-doux);display:block;margin-top:2px}
+.sp{display:flex;align-items:center;gap:10px;margin-bottom:7px;font-size:12.5px}
+.sp i{display:block;height:14px;background:var(--mandarine);border-radius:3px}
+.rad{display:flex;gap:12px;flex-wrap:wrap}
+.rad div{width:74px;height:64px;background:var(--surface);border:1.5px solid var(--texte);display:flex;align-items:flex-end;justify-content:center;font-size:11px;padding-bottom:5px}
+.shad{display:flex;gap:14px;flex-wrap:wrap}
+.shad div{width:120px;height:72px;background:var(--surface);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:11.5px;color:var(--texte-doux)}
+.tree{font-family:ui-monospace,Menlo,monospace;font-size:12.5px;line-height:1.85;white-space:pre;overflow-x:auto;color:var(--texte)}
+.tree b{color:var(--mandarine-texte)}
+</style>
+
+<section class="task" id="t1">
+  <div class="task-head"><span class="tag">T1</span><h2>Créer le fichier Figma et son arborescence</h2><span class="est">1 h · terminé</span></div>
+  <p class="intro">Une page par étape du travail, dans l'ordre où on la produit. Personne ne cherche où poser un écran, et le lien partagé ouvre toujours sur la couverture, jamais sur un brouillon.</p>
+  <div class="cols">
+    <div class="card" style="flex:1 1 440px">
+      <h4 class="mini">Pages du fichier</h4>
+      <div class="tree"><b>Apik — Produit</b>
+├── 00 · Couverture        lien de partage, état d'avancement, qui édite quoi
+├── 01 · Identité          logo, favicon, moodboard, règles d'usage
+├── 02 · Design system     variables, styles, bibliothèque de composants
+├── 03 · Wireframes        les trois parcours critiques, en gris
+├── 04 · Structure         inscription, créneau, encadrement, matching, tableau de bord
+├── 05 · Animateur         inscription, profil, propositions, mes heures
+├── 06 · Responsive        mobile 390, tablette 768, desktop 1440
+├── 07 · Prototype         parcours cliquable de la soutenance
+└── 99 · Archives          versions abandonnées, jamais supprimées</div>
+    </div>
+    <div class="card">
+      <h4 class="mini">Conventions de nommage</h4>
+      <div class="scroll"><table>
+        <tr><th>Objet</th><th>Forme</th></tr>
+        <tr><td>Frame d'écran</td><td><code>Structure / Créneau / Publication</code></td></tr>
+        <tr><td>État d'écran</td><td><code>… / Vide</code>, <code>… / Erreur</code>, <code>… / Chargement</code></td></tr>
+        <tr><td>Composant</td><td><code>Bouton</code> avec propriétés <code>type</code>, <code>état</code>, <code>taille</code></td></tr>
+        <tr><td>Variable</td><td><code>couleur/action/primaire</code></td></tr>
+        <tr><td>Responsive</td><td>suffixe <code>· 390</code>, <code>· 768</code>, <code>· 1440</code></td></tr>
+      </table></div>
+      <div class="note">Le nom de la frame devient le nom de la route côté code. <strong>Structure / Créneau / Publication</strong> donne <code class="inline">/structure/creneaux/nouveau</code>. L'intégration n'a plus rien à deviner.</div>
+    </div>
+  </div>
+  <div class="note"><strong>Règle d'équipe :</strong> une seule personne édite le design system. Tout le monde peut poser des écrans sur 04, 05 et 06, mais personne ne détache un composant : on demande une variante. Un composant détaché est un écart de charte qui se retrouve en production.</div>
+</section>
+<section class="task" id="t2">
+  <div class="task-head"><span class="tag">T2</span><h2>Construire les styles et variables Figma</h2><span class="est">2 h 30 · terminé</span></div>
+  <p class="intro">Deux collections. Les primitives portent les couleurs de la marque et ne sont jamais posées directement sur un calque. Les variables sémantiques disent à quoi sert la couleur, et ce sont elles seules qu'on applique. Changer la couleur d'action se fait alors à un endroit.</p>
+
+  <div class="cols">
+    <div class="card">
+      <h4 class="mini">Primitives de couleur</h4>
+      <div class="sw"><i style="background:#FF7A3D"></i><div><div class="nm">Mandarine Pik · #FF7A3D</div><div class="us">La couleur du manque : ce qui reste à pourvoir</div></div></div>
+      <div class="sw"><i style="background:#C2410C"></i><div><div class="nm">Mandarine Encre · #C2410C</div><div class="us">Version texte de la mandarine, lisible sur crème</div></div></div>
+      <div class="sw"><i style="background:#14B8A6"></i><div><div class="nm">Turquoise Confiance · #14B8A6</div><div class="us">La couleur de ce qui se remplit : conformité, accord</div></div></div>
+      <div class="sw"><i style="background:#FFC93C"></i><div><div class="nm">Jaune Peps · #FFC93C</div><div class="us">Anneau de focus, accent de marque</div></div></div>
+      <div class="sw"><i style="background:#1A1B41"></i><div><div class="nm">Encre Nuit · #1A1B41</div><div class="us">Texte, barres de navigation, texte sur aplat vif</div></div></div>
+      <div class="sw"><i style="background:#FFF7EF;border-color:#F0E4D7"></i><div><div class="nm">Crème · #FFF7EF</div><div class="us">Surface, sur fond Sable #F3E9DE</div></div></div>
+      <div class="sw" style="border-bottom:none"><i style="background:linear-gradient(90deg,#0E7C4A 50%,#C4302B 50%)"></i><div><div class="nm">Conforme #0E7C4A · Hors-taux #C4302B</div><div class="us">Versions texte des états, validées au contraste</div></div></div>
+    </div>
+    <div class="card">
+      <h4 class="mini">Variables sémantiques</h4>
+      <div class="scroll"><table>
+        <tr><th>Variable</th><th>Valeur</th><th>Usage</th></tr>
+        <tr><td><code>action/primaire</code></td><td>Mandarine Pik</td><td>Fond du bouton principal</td></tr>
+        <tr><td><code>texte/sur-action</code></td><td>Encre Nuit</td><td>Libellé posé sur mandarine ou turquoise</td></tr>
+        <tr><td><code>action/bordure</code></td><td>#E5651F</td><td>Contour du bouton, porte la forme</td></tr>
+        <tr><td><code>texte/lien</code></td><td>Mandarine Encre</td><td>Liens et boutons fantômes sur crème</td></tr>
+        <tr><td><code>etat/conforme</code></td><td>#0E7C4A</td><td>Taux respecté, mission pourvue</td></tr>
+        <tr><td><code>etat/hors-taux</code></td><td>#C4302B</td><td>Sous le seuil, honorabilité bloquée</td></tr>
+        <tr><td><code>etat/attente</code></td><td>#B5840B</td><td>Diffusé, vérification en cours</td></tr>
+        <tr><td><code>focus/anneau</code></td><td>Jaune Peps</td><td>Anneau de 3 px, jamais supprimé</td></tr>
+      </table></div>
+      <div class="note alerte"><strong>Décision prise au contrôle d'accessibilité :</strong> le texte sur mandarine passe en Encre Nuit et non en crème. Le crème sur mandarine plafonne à 2,44:1 et échoue. Le détail du calcul est en T8.</div>
+    </div>
+  </div>
+
+  <h3 class="sub">Échelle typographique</h3>
+  <div class="cols">
+    <div class="card">
+      <ul class="scale">
+        <li style="font-family:var(--titre);font-size:34px;line-height:1.05;font-weight:600">Il te manque 4 heures<span class="lab">Titre d'écran · Fredoka 34 / 36</span></li>
+        <li style="font-family:var(--titre);font-size:22px;line-height:1.25;font-weight:600">Ce qui se remplit<span class="lab">Titre de section · Fredoka 22 / 28</span></li>
+        <li style="font-size:16px;font-weight:600">Accueil du soir, enfants 6-10 ans<span class="lab">Titre de carte · Inter 16 / 22 Semibold</span></li>
+        <li style="font-size:14px">Créneau diffusé à 42 animateurs dans un rayon de 12 km.<span class="lab">Texte courant · Inter 14 / 21 Regular</span></li>
+        <li style="font-size:12px;font-weight:700;letter-spacing:.14em;border-bottom:none">Mercredi 23 septembre<span class="lab">Étiquette · Inter 12 Bold, interlettrage 0,14 em</span></li>
+      </ul>
+      <p style="font-size:13px;color:var(--texte-doux);margin-top:6px">Chiffres tabulaires activés partout où des horaires s'empilent : <span style="font-variant-numeric:tabular-nums;font-weight:600">07h30 · 11h30 · 16h30 · 12 / 14</span>. Les colonnes du planning restent alignées.</p>
+    </div>
+    <div class="card" style="flex:0 1 320px">
+      <h4 class="mini">Espacement, base 4</h4>
+      <div class="sp"><i style="width:4px"></i>4 · entre une icône et son libellé</div>
+      <div class="sp"><i style="width:8px"></i>8 · à l'intérieur d'un composant</div>
+      <div class="sp"><i style="width:12px"></i>12 · entre deux champs</div>
+      <div class="sp"><i style="width:16px"></i>16 · marge intérieure de carte</div>
+      <div class="sp"><i style="width:24px"></i>24 · entre deux cartes</div>
+      <div class="sp"><i style="width:40px"></i>40 · entre deux sections</div>
+      <h4 class="mini" style="margin-top:20px">Rayons</h4>
+      <div class="rad">
+        <div style="border-radius:10px">10 champ</div>
+        <div style="border-radius:16px">16 carte</div>
+        <div style="border-radius:22px">22 panneau</div>
+        <div style="border-radius:999px">999 bouton</div>
+      </div>
+      <h4 class="mini" style="margin-top:20px">Ombres</h4>
+      <div class="shad">
+        <div style="box-shadow:var(--ombre-1)">1 · carte posée</div>
+        <div style="box-shadow:var(--ombre-2)">2 · panneau</div>
+        <div style="box-shadow:var(--ombre-3)">3 · modale</div>
+      </div>
+    </div>
+  </div>
+
+  <h3 class="sub">Export vers le code</h3>
+  <p style="color:var(--texte-doux);max-width:74ch;margin-bottom:14px">Les variables sortent de Figma dans ce format. Le fichier alimente directement la tâche « Intégrer les design tokens dans le frontend » : aucune valeur hexadécimale n'est écrite à la main dans un composant React.</p>
+  <pre>:root{
+  --apik-action-primaire:#FF7A3D;
+  --apik-action-bordure:#E5651F;
+  --apik-texte-sur-action:#1A1B41;
+  --apik-texte-lien:#C2410C;
+  --apik-confiance:#14B8A6;
+  --apik-focus:#FFC93C;
+  --apik-encre:#1A1B41;
+  --apik-surface:#FFF7EF;
+  --apik-fond:#F3E9DE;
+  --apik-etat-conforme:#0E7C4A;
+  --apik-etat-attente:#B5840B;
+  --apik-etat-hors-taux:#C4302B;
+  --apik-espace-1:4px;  --apik-espace-2:8px;  --apik-espace-3:12px;
+  --apik-espace-4:16px; --apik-espace-6:24px; --apik-espace-10:40px;
+  --apik-rayon-champ:10px; --apik-rayon-carte:16px; --apik-rayon-panneau:22px;
+  --apik-cible-min:44px;
+}</pre>
+</section>
+<section class="task" id="t3">
+  <div class="task-head"><span class="tag">T3</span><h2>Créer la bibliothèque de composants</h2><span class="est">4 h · terminé</span></div>
+  <p class="intro">Sept familles, toutes construites sur les variables de T2, toutes avec leurs états. Un composant sans son état d'erreur et son état vide est un composant qui sera réinventé pendant l'intégration.</p>
+
+  <div class="cols">
+    <div class="card">
+      <h4 class="mini">Boutons</h4>
+      <div class="row"><span class="btn b-p">Publier le créneau</span><span class="btn b-s">Voir les 3 réponses</span><span class="btn b-t">Je prends le créneau</span></div>
+      <div class="row" style="margin-top:12px"><span class="btn b-g">Plus tard</span><span class="btn b-d">Annuler le créneau</span><span class="btn b-x">Publier le créneau</span></div>
+      <div class="row" style="margin-top:12px"><span class="btn b-f">Focus clavier</span><span class="btn b-p b-sm">Taille compacte</span></div>
+      <p style="font-size:13px;color:var(--texte-doux);margin-top:12px">Une seule action primaire par écran. Hauteur minimale 44 px, y compris en version compacte, où la cible tactile déborde visuellement la bordure. Le libellé dit ce qui se passe : le bouton « Publier le créneau » produit le message « Créneau publié ».</p>
+    </div>
+    <div class="card">
+      <h4 class="mini">Champs de formulaire</h4>
+      <div class="fld"><label>Nom de la structure</label><div class="in">Assoc. Léo Lagrange</div></div>
+      <div class="fld" style="margin-top:12px"><label>Commune d'intervention</label><div class="in foc">Rennes<span style="color:#6E6F91">▾</span></div><span class="hint">La zone de diffusion part de cette commune.</span></div>
+      <div class="fld" style="margin-top:12px"><label>Numéro SIRET</label><div class="in err">802 154 227 000<span style="color:#C4302B;font-weight:700">⚠</span></div><span class="msg">Il manque 2 chiffres. Un SIRET en compte 14.</span></div>
+      <div class="fld" style="margin-top:12px"><label>Créneaux disponibles</label>
+        <div class="chips"><span class="chip on">Matin</span><span class="chip">Méridienne</span><span class="chip on">Soir</span><span class="chip">Mercredi</span><span class="chip">Vacances</span></div>
+      </div>
+      <div class="chk" style="margin-top:14px"><i class="on">✓</i><span>J'accepte que mon attestation d'honorabilité soit vérifiée auprès du SDJES.</span></div>
+    </div>
+  </div>
+
+  <div class="cols" style="margin-top:22px">
+    <div class="card" style="flex:1 1 360px">
+      <h4 class="mini">Carte de créneau</h4>
+      <div class="mc">
+        <div class="mc-h">Demain · 7h30 – 8h30<span>3,1 km</span></div>
+        <div class="mc-b">
+          <div class="titre">Accueil du matin, enfants 6-10 ans</div>
+          <small>Assoc. Léo Lagrange · École J. Prévert, Rennes</small>
+          <p>Il manque 1 animateur pour rester au 1 / 14. BAFA ou équivalent demandé.</p>
+          <div class="row"><span class="bdg bdg-dip">◆ BAFA</span><span class="bdg bdg-hon">✓ Honorabilité vérifiée</span></div>
+          <div class="row"><span class="btn b-t b-sm">Je prends le créneau</span><span class="btn b-g b-sm">Plus tard</span></div>
+        </div>
+      </div>
+      <p style="font-size:12.5px;color:var(--texte-doux);margin-top:10px">Variante structure : l'en-tête passe en mandarine tant que le créneau n'est pas pourvu, en turquoise dès qu'un animateur est confirmé.</p>
+    </div>
+    <div class="card" style="flex:1 1 300px">
+      <h4 class="mini">Badges de certification</h4>
+      <div class="row"><span class="bdg bdg-dip">◆ BAFA</span><span class="bdg bdg-dip">◆ BPJEPS</span><span class="bdg bdg-dip">◆ CAP AEPE</span></div>
+      <div class="row" style="margin-top:10px"><span class="bdg bdg-stg">◐ BAFA stagiaire</span><span class="bdg bdg-nq">○ Sans qualification</span><span class="bdg bdg-dip">◆ SST</span></div>
+      <p style="font-size:12.5px;color:var(--texte-doux);margin-top:10px">Le losange, le demi-cercle et le cercle vide distinguent les trois catégories qui comptent dans le quota réglementaire, sans dépendre de la couleur.</p>
+      <h4 class="mini" style="margin-top:22px">Badges d'honorabilité</h4>
+      <div class="row"><span class="bdg bdg-hon">✓ Vérifiée</span><span class="bdg bdg-att">⧗ En attente</span><span class="bdg bdg-blq">⚠ Bloquée</span></div>
+      <p style="font-size:12.5px;color:var(--texte-doux);margin-top:10px">Un profil dont l'honorabilité n'est pas vérifiée reste visible mais ne peut pas être confirmé sur un créneau. Le badge est toujours accolé au nom, jamais isolé en bas de carte.</p>
+    </div>
+  </div>
+
+  <div class="cols" style="margin-top:22px">
+    <div class="card" style="flex:1 1 420px">
+      <h4 class="mini">Alerte de seuil d'encadrement</h4>
+      <div class="seuil s-ok"><span class="pic">✓</span><div><strong>Taux respecté</strong><span>78 enfants, 6 animateurs. Le seuil de 1 / 14 demande 6 animateurs.</span></div></div>
+      <div class="seuil s-warn" style="margin-top:12px"><span class="pic">◐</span><div><strong>Quota de qualification limite</strong><span>3 diplômés sur 6. Un stagiaire de plus ferait passer l'équipe sous la moitié de diplômés exigée.</span></div></div>
+      <div class="seuil s-ko" style="margin-top:12px"><span class="pic">⚠</span><div><strong>Sous le seuil demain à 7h30</strong><span>78 enfants, 5 animateurs. Il en manque 1. Sans remplacement, 14 enfants ne peuvent pas être accueillis.</span></div></div>
+      <div style="margin-top:14px">
+        <div class="row spread" style="font-size:12.5px;font-weight:600"><span>Équipe de demain matin</span><span style="color:#C4302B">5 / 6</span></div>
+        <div class="jauge" style="margin-top:6px"><i class="fait" style="width:67%"></i><i class="att" style="width:16%"></i></div>
+        <small style="font-size:11.5px;color:#6E6F91">Plein : confirmés. Hachuré : réponses en attente de confirmation.</small>
+      </div>
+    </div>
+    <div class="card" style="flex:1 1 300px">
+      <h4 class="mini">États de mission</h4>
+      <div class="row"><span class="st st-bro">◌ Brouillon</span><span class="st st-ouv">◔ Ouverte</span><span class="st st-dif">⧗ Diffusée</span></div>
+      <div class="row" style="margin-top:10px"><span class="st st-pou">✓ Pourvue</span><span class="st st-cou">▶ En cours</span><span class="st st-ter">■ Terminée</span></div>
+      <div class="row" style="margin-top:10px"><span class="st st-ann">✕ Annulée</span></div>
+      <p style="font-size:12.5px;color:var(--texte-doux);margin-top:12px">Sept états, chacun avec un signe propre. Le brouillon est le seul en bordure pointillée : il n'est visible par personne d'autre que la structure. « Terminée » déclenche la génération du relevé d'heures.</p>
+    </div>
+  </div>
+</section>
+<section class="task" id="t4">
+  <div class="task-head"><span class="tag">T4</span><h2>Wireframes des parcours critiques</h2><span class="est">3 h · terminé</span></div>
+  <p class="intro">Trois parcours, en gris, sans typographie de marque : à ce stade on ne discute que de l'ordre des questions et du nombre d'écrans. Chaque étape a été validée en équipe avant d'être habillée. Les écrans coloriés en T5 et T6 suivent exactement cette structure.</p>
+
+  <h3 class="sub">Parcours 1 · Inscription, deux portes d'entrée</h3>
+  <div class="flow">
+    <div class="wf"><span class="step">ÉTAPE 1</span><h5>Choix du rôle</h5><div class="bar m"></div><div class="box">Je recrute des animateurs</div><div class="box">Je cherche des créneaux</div><div class="bar s"></div></div>
+    <span class="arrow">→</span>
+    <div class="fork">
+      <div class="wf"><span class="step">2A · STRUCTURE</span><h5>Identité de la structure</h5><div class="box">SIRET · recherche Sirene</div><div class="box">Type : école, ALSH, association</div><div class="box">PEDT actif ?  oui / non</div><div class="btnw">Continuer</div></div>
+      <div class="wf"><span class="step">2B · ANIMATEUR</span><h5>Identité et zone</h5><div class="box">Nom, téléphone, commune</div><div class="box">Rayon de déplacement</div><div class="bar m"></div><div class="btnw">Continuer</div></div>
+    </div>
+    <span class="arrow">→</span>
+    <div class="fork">
+      <div class="wf"><span class="step">3A</span><h5>Effectifs accueillis</h5><div class="box">Enfants de moins de 6 ans</div><div class="box">Enfants de 6 ans et plus</div><div class="box" style="border-style:solid">Seuil calculé et affiché ici</div></div>
+      <div class="wf"><span class="step">3B</span><h5>Certifications</h5><div class="box">Diplôme + date</div><div class="box">Dépôt de l'attestation</div><div class="box" style="border-style:solid">Honorabilité : en attente</div></div>
+    </div>
+    <span class="arrow">→</span>
+    <div class="fork">
+      <div class="wf"><span class="step">4A</span><h5>Compte et mot de passe</h5><div class="box">E-mail professionnel</div><div class="box">Mot de passe + règle affichée</div><div class="btnw">Créer le compte</div></div>
+      <div class="wf"><span class="step">4B</span><h5>Disponibilités</h5><div class="box">Blocs : matin, midi, soir, mercredi</div><div class="box">Objectif hebdomadaire en heures</div><div class="btnw">Créer le compte</div></div>
+    </div>
+  </div>
+  <div class="note">Le rôle est demandé en premier et ne change plus. Les deux branches ne partagent que l'écran du mot de passe. L'honorabilité est posée à l'inscription et non au moment de la candidature : sinon l'animateur découvre le blocage quand il postule, au pire moment.</div>
+
+  <h3 class="sub">Parcours 2 · Publier un créneau</h3>
+  <div class="flow">
+    <div class="wf"><span class="step">ÉTAPE 1</span><h5>Planning de la semaine</h5><div class="bar l"></div><div class="box">Grille 5 jours × 3 blocs</div><div class="box" style="border-style:solid">2 cases signalées en manque</div><div class="btnw">Publier les créneaux manquants</div></div>
+    <span class="arrow">→</span>
+    <div class="wf"><span class="step">ÉTAPE 2</span><h5>Détail du créneau</h5><div class="box">Date, horaires, lieu</div><div class="box">Poste, tranche d'âge, effectif</div><div class="box">Qualification demandée</div><div class="box">Rémunération horaire</div></div>
+    <span class="arrow">→</span>
+    <div class="wf"><span class="step">ÉTAPE 3</span><h5>Contrôle du taux</h5><div class="box" style="border-style:solid">Effectif ÷ seuil = animateurs requis</div><div class="box">Écart affiché en clair</div><div class="bar m"></div></div>
+    <span class="arrow">→</span>
+    <div class="wf"><span class="step">ÉTAPE 4</span><h5>Récapitulatif</h5><div class="bar l"></div><div class="bar m"></div><div class="box">Zone de diffusion et nombre de profils atteints</div><div class="btnw">Publier</div><div class="btnw sec">Enregistrer en brouillon</div></div>
+  </div>
+  <div class="note">L'écran 2 est pré-rempli à partir des intitulés de poste normalisés issus des offres publiques du secteur. La structure corrige, elle ne saisit pas. C'est le premier usage produit visible des données publiques.</div>
+
+  <h3 class="sub">Parcours 3 · Matching et confirmation</h3>
+  <div class="flow">
+    <div class="wf"><span class="step">ÉTAPE 1</span><h5>Créneau diffusé</h5><div class="bar m"></div><div class="box">Profils atteints, rayon, délai</div><div class="box">État : diffusé</div></div>
+    <span class="arrow">→</span>
+    <div class="wf"><span class="step">ÉTAPE 2</span><h5>Réponses classées</h5><div class="box">Profil · score · distance</div><div class="box">Profil · score · distance</div><div class="box" style="border-style:solid">Profil bloqué, non sélectionnable</div></div>
+    <span class="arrow">→</span>
+    <div class="wf"><span class="step">ÉTAPE 3</span><h5>Détail du profil</h5><div class="bar m"></div><div class="box">Certifications et honorabilité</div><div class="box">Historique chez cette structure</div><div class="btnw">Confirmer</div></div>
+    <span class="arrow">→</span>
+    <div class="wf"><span class="step">ÉTAPE 4</span><h5>Créneau pourvu</h5><div class="box" style="border-style:solid">Taux revenu au vert</div><div class="box">Contrat de mission généré</div><div class="bar s"></div></div>
+  </div>
+  <div class="note alerte"><strong>Point tranché sur le wireframe :</strong> un profil dont l'honorabilité n'est pas vérifiée apparaît dans les réponses mais son bouton de confirmation est inactif, avec le motif affiché. Le masquer purement et simplement laissait la structure croire que personne n'avait répondu.</div>
+</section>
+<section class="task" id="t5">
+  <div class="task-head"><span class="tag">T5</span><h2>Maquetter les écrans structure</h2><span class="est">5 h · terminé</span></div>
+  <p class="intro">Cinq écrans. Le principe de composition tenu partout : à gauche ce qui manque, à droite ce qui se remplit. La structure ouvre Apik pour une seule raison, savoir si elle peut accueillir les enfants demain matin, et la réponse est toujours dans le premier écran.</p>
+
+  <h3 class="sub">5.1 · Inscription, étape des effectifs</h3>
+  <div class="mk" style="max-width:860px">
+    <div class="mk-top"><span class="mk-logo">Ap<i>i</i>k</span><nav><span>1 Structure</span><span>2 Lieux</span><span class="on">3 Effectifs</span><span>4 Compte</span></nav></div>
+    <div class="mk-body">
+      <h3>Combien d'enfants accueillez-vous ?</h3>
+      <p>Ces effectifs servent à calculer votre seuil d'encadrement. Vous pourrez les ajuster par créneau.</p>
+      <div class="two">
+        <div class="pane manque">
+          <div class="eyebrow">Déclaration</div>
+          <div class="fld"><label>Enfants de moins de 6 ans</label><div class="in">42</div></div>
+          <div class="fld"><label>Enfants de 6 ans et plus</label><div class="in foc">172</div></div>
+          <div class="chk"><i class="on">✓</i><span>Notre projet éducatif territorial (PEDT) est en cours de validité.</span></div>
+          <small>Le PEDT assouplit les seuils. Sans PEDT, ils passent à 1 / 10 et 1 / 14.</small>
+        </div>
+        <div class="pane remplit">
+          <div class="eyebrow tq">Votre seuil</div>
+          <div class="row spread"><span>Moins de 6 ans · 1 / 14</span><strong>3 animateurs</strong></div>
+          <div class="row spread"><span>6 ans et plus · 1 / 18</span><strong>10 animateurs</strong></div>
+          <hr>
+          <div class="row spread"><strong style="font-family:var(--titre);font-size:20px">Équipe minimale</strong><strong style="font-family:var(--titre);font-size:28px">13</strong></div>
+          <div class="seuil s-warn"><span class="pic">◐</span><div><strong>Quota de qualification</strong><span>Au moins 7 de ces 13 animateurs doivent être diplômés, et 4 au plus peuvent être sans qualification.</span></div></div>
+        </div>
+      </div>
+      <div class="row"><span class="btn b-p">Continuer</span><span class="btn b-g">Revenir aux lieux</span></div>
+    </div>
+  </div>
+
+  <h3 class="sub">5.2 · Publier un créneau</h3>
+  <div class="mk" style="max-width:860px">
+    <div class="mk-top"><span class="mk-logo">Ap<i>i</i>k</span><nav><span class="on">Planning</span><span>Créneaux publiés</span><span>Mon équipe</span><span>Contrats</span></nav></div>
+    <div class="mk-body">
+      <div class="row spread"><h3>Nouveau créneau</h3><span class="st st-bro">◌ Brouillon</span></div>
+      <div class="two">
+        <div class="pane">
+          <div class="fld"><label>Intitulé du poste</label><div class="in">Animateur d'accueil périscolaire<span style="color:#6E6F91">▾</span></div><span class="hint">Proposé à partir des intitulés observés sur les offres publiques du secteur à Rennes.</span></div>
+          <div class="row"><div class="fld" style="flex:1"><label>Date</label><div class="in">jeu. 17 sept.</div></div><div class="fld" style="flex:1"><label>Bloc</label><div class="in">Soir · 16h30 – 18h30</div></div></div>
+          <div class="fld"><label>Qualification demandée</label><div class="chips"><span class="chip on">BAFA</span><span class="chip">BPJEPS</span><span class="chip">CAP AEPE</span><span class="chip">Sans exigence</span></div></div>
+          <div class="fld"><label>Rémunération brute horaire</label><div class="in">13,20 €</div><span class="hint">Médiane observée sur le secteur : 12,60 €.</span></div>
+        </div>
+        <div class="pane remplit">
+          <div class="eyebrow tq">Ce que ça change</div>
+          <div class="row spread"><span>Enfants attendus sur ce créneau</span><strong>78</strong></div>
+          <div class="row spread"><span>Animateurs requis au 1 / 14</span><strong>6</strong></div>
+          <div class="row spread"><span>Déjà confirmés</span><strong style="color:#C4302B">5</strong></div>
+          <div class="seuil s-ko"><span class="pic">⚠</span><div><strong>Il manque 1 animateur</strong><span>Sans ce créneau pourvu, 14 enfants ne peuvent pas être accueillis jeudi soir.</span></div></div>
+          <hr>
+          <small>Diffusion estimée : 42 animateurs disponibles dans un rayon de 12 km, dont 28 titulaires du BAFA.</small>
+          <span class="btn b-p b-full">Publier le créneau</span>
+          <span class="btn b-g" style="align-self:center">Enregistrer en brouillon</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h3 class="sub">5.3 · Calculateur de taux d'encadrement</h3>
+  <div class="mk" style="max-width:860px">
+    <div class="mk-top"><span class="mk-logo">Ap<i>i</i>k</span><nav><span class="on">Planning</span><span>Créneaux publiés</span><span>Mon équipe</span><span>Contrats</span></nav></div>
+    <div class="mk-body">
+      <div class="row spread top">
+        <div><h3>Semaine du 14 au 18 septembre</h3><small>Assoc. Léo Lagrange · Rennes · PEDT actif · seuils 1 / 14 et 1 / 18</small></div>
+        <div class="row"><span class="st st-pou">✓ 13 conformes</span><span class="st st-ann">⚠ 2 hors-taux</span></div>
+      </div>
+      <div class="scroll">
+      <table class="plan">
+        <tr><th class="lbl">Bloc</th><th>Lun 14</th><th>Mar 15</th><th>Mer 16</th><th>Jeu 17</th><th>Ven 18</th></tr>
+        <tr><th class="lbl">Matin<br><small style="font-weight:400">07h30 – 08h30</small></th><td class="ok">6 / 6</td><td class="ok">6 / 6</td><td class="ok">4 / 4</td><td class="ko">5 / 6</td><td class="ok">6 / 6</td></tr>
+        <tr><th class="lbl">Méridienne<br><small style="font-weight:400">11h30 – 13h30</small></th><td class="ok">12 / 12</td><td class="ok">12 / 12</td><td class="ok">4 / 4</td><td class="att">11 / 12</td><td class="ok">12 / 12</td></tr>
+        <tr><th class="lbl">Soir<br><small style="font-weight:400">16h30 – 18h30</small></th><td class="ok">6 / 6</td><td class="ok">6 / 6</td><td class="ok">4 / 4</td><td class="ko">5 / 6</td><td class="ok">6 / 6</td></tr>
+      </table></div>
+      <small>Lecture : animateurs confirmés sur animateurs requis. Fond vert et chiffres égaux : conforme. Fond jaune rayé d'un point d'interrogation : réponse en attente. Fond rouge : sous le seuil.</small>
+      <div class="two">
+        <div class="pane manque">
+          <div class="eyebrow">Ce qui manque</div>
+          <div class="seuil s-ko"><span class="pic">⚠</span><div><strong>Jeudi 17, matin et soir</strong><span>78 enfants, 5 animateurs confirmés, 6 requis. Un animateur manquant sur chacun des deux blocs.</span></div></div>
+          <div class="row"><span class="btn b-p b-sm">Publier les 2 créneaux</span><span class="btn b-s b-sm">Réduire l'effectif accueilli</span></div>
+        </div>
+        <div class="pane remplit">
+          <div class="eyebrow tq">Composition de l'équipe de jeudi</div>
+          <div class="row"><span class="bdg bdg-dip">◆ BAFA × 3</span><span class="bdg bdg-dip">◆ BPJEPS × 1</span><span class="bdg bdg-stg">◐ Stagiaire × 1</span></div>
+          <div class="jauge"><i class="fait" style="width:80%"></i><i class="att" style="width:0"></i></div>
+          <div class="seuil s-warn"><span class="pic">◐</span><div><strong>Recrutez de préférence un diplômé</strong><span>4 diplômés sur 5. Un animateur sans qualification ferait passer l'équipe sous la moitié exigée.</span></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h3 class="sub">5.4 · Résultats de matching</h3>
+  <div class="mk" style="max-width:860px">
+    <div class="mk-top"><span class="mk-logo">Ap<i>i</i>k</span><nav><span>Planning</span><span class="on">Créneaux publiés</span><span>Mon équipe</span><span>Contrats</span></nav></div>
+    <div class="mk-body">
+      <div class="row spread top">
+        <div><h3>Jeudi 17 · soir · 16h30 – 18h30</h3><small>Diffusé à 42 animateurs il y a 2 h · 3 réponses</small></div>
+        <span class="st st-dif">⧗ Diffusée</span>
+      </div>
+      <div class="pane remplit">
+        <div class="eyebrow tq">Réponses classées par score de compatibilité</div>
+        <div class="row spread top" style="padding:10px 0;border-bottom:1px solid #F0E4D7">
+          <div><h4>Sofia D. — 94 / 100</h4><small>BPJEPS · 3,1 km · déjà venue 4 fois chez vous · disponible sur le bloc entier</small><div class="row" style="margin-top:6px"><span class="bdg bdg-dip">◆ BPJEPS</span><span class="bdg bdg-hon">✓ Honorabilité vérifiée</span></div></div>
+          <span class="btn b-p b-sm">Confirmer Sofia D.</span>
+        </div>
+        <div class="row spread top" style="padding:10px 0;border-bottom:1px solid #F0E4D7">
+          <div><h4>Malik K. — 81 / 100</h4><small>BAFA · 6,8 km · première mission chez vous</small><div class="row" style="margin-top:6px"><span class="bdg bdg-dip">◆ BAFA</span><span class="bdg bdg-hon">✓ Honorabilité vérifiée</span></div></div>
+          <span class="btn b-s b-sm">Confirmer Malik K.</span>
+        </div>
+        <div class="row spread top" style="padding:10px 0">
+          <div><h4>Théo L. — 76 / 100</h4><small>BAFA stagiaire · 2,4 km</small><div class="row" style="margin-top:6px"><span class="bdg bdg-stg">◐ BAFA stagiaire</span><span class="bdg bdg-blq">⚠ Honorabilité en attente</span></div></div>
+          <span class="btn b-x b-sm">Confirmation impossible</span>
+        </div>
+        <small>Théo L. ne peut pas être confirmé tant que la vérification d'honorabilité n'est pas revenue. Il reste affiché pour que vous sachiez qu'il a répondu.</small>
+      </div>
+      <p>La confirmation génère le contrat de mission, retire le créneau du planning hors-taux et prévient les deux autres candidats.</p>
+    </div>
+  </div>
+
+  <h3 class="sub">5.5 · Tableau de bord des créneaux</h3>
+  <div class="mk" style="max-width:860px">
+    <div class="mk-top"><span class="mk-logo">Ap<i>i</i>k</span><nav><span>Planning</span><span class="on">Créneaux publiés</span><span>Mon équipe</span><span>Contrats</span></nav></div>
+    <div class="mk-body">
+      <div class="row"><span class="st st-ouv">◔ 2 ouvertes</span><span class="st st-dif">⧗ 3 diffusées</span><span class="st st-pou">✓ 11 pourvues</span><span class="st st-ter">■ 24 terminées</span><span class="st st-ann">✕ 1 annulée</span></div>
+      <div class="scroll"><table>
+        <tr><th>Créneau</th><th>Bloc</th><th>Animateur</th><th>État</th><th>Contrat</th></tr>
+        <tr><td>Jeu. 17 sept.</td><td>Soir · 16h30 – 18h30</td><td>3 réponses</td><td><span class="st st-dif">⧗ Diffusée</span></td><td>—</td></tr>
+        <tr><td>Jeu. 17 sept.</td><td>Matin · 07h30 – 08h30</td><td>Aucune réponse</td><td><span class="st st-ouv">◔ Ouverte</span></td><td>—</td></tr>
+        <tr><td>Mer. 16 sept.</td><td>Journée · 08h30 – 17h30</td><td>Sofia D.</td><td><span class="st st-cou">▶ En cours</span></td><td>Signé</td></tr>
+        <tr><td>Mar. 15 sept.</td><td>Méridienne · 11h30 – 13h30</td><td>Malik K.</td><td><span class="st st-pou">✓ Pourvue</span></td><td>Signé</td></tr>
+        <tr><td>Lun. 14 sept.</td><td>Soir · 16h30 – 18h30</td><td>Inès B.</td><td><span class="st st-ter">■ Terminée</span></td><td>2 h relevées</td></tr>
+      </table></div>
+      <small>Trié par date du créneau, le plus urgent en haut. Les créneaux terminés basculent dans l'onglet Contrats au bout de sept jours.</small>
+    </div>
+  </div>
+</section>
+<section class="task" id="t6">
+  <div class="task-head"><span class="tag">T6</span><h2>Maquetter les écrans animateur</h2><span class="est">4 h · terminé</span></div>
+  <p class="intro">Quatre écrans, écrits pour quelqu'un qui consulte son téléphone entre deux services. La question de l'animateur n'est pas « quelles missions existent » mais « combien d'heures me manque-t-il cette semaine, et qu'est-ce qui les comble ».</p>
+
+  <h3 class="sub">6.1 · Inscription, certifications et honorabilité</h3>
+  <div class="mk" style="max-width:860px">
+    <div class="mk-top"><span class="mk-logo">Ap<i>i</i>k</span><nav><span>1 Profil</span><span class="on">2 Certifications</span><span>3 Disponibilités</span><span>4 Compte</span></nav></div>
+    <div class="mk-body">
+      <h3>Qu'est-ce que tu peux encadrer ?</h3>
+      <p>Tes diplômes déterminent les créneaux qu'on te propose. Tu peux en ajouter plus tard.</p>
+      <div class="two">
+        <div class="pane">
+          <div class="fld"><label>Diplôme ou titre</label><div class="in">BPJEPS mention loisirs tous publics<span style="color:#6E6F91">▾</span></div></div>
+          <div class="row"><div class="fld" style="flex:1"><label>Obtenu en</label><div class="in">2021</div></div><div class="fld" style="flex:1"><label>Justificatif</label><div class="in ph">Ajouter un fichier</div></div></div>
+          <div class="fld"><label>Autres qualifications</label><div class="chips"><span class="chip on">SST</span><span class="chip">Surveillant de baignade</span><span class="chip">Permis B</span></div></div>
+          <small>Les pièces justificatives sont chiffrées et ne sont jamais visibles par les structures. Elles voient un badge, pas ton document.</small>
+        </div>
+        <div class="pane manque">
+          <div class="eyebrow">Vérification obligatoire</div>
+          <h4>Honorabilité</h4>
+          <p>Encadrer des mineurs impose une vérification auprès du service départemental. Elle prend deux à cinq jours.</p>
+          <div class="chk"><i class="on">✓</i><span>J'autorise Apik à faire vérifier mon honorabilité et je certifie l'exactitude de mes déclarations.</span></div>
+          <div class="seuil s-warn" style="margin-top:4px"><span class="pic">⧗</span><div><strong>En attente de vérification</strong><span>Tu peux déjà voir les créneaux et te positionner. Une structure ne pourra te confirmer qu'une fois la vérification revenue.</span></div></div>
+          <span class="btn b-p b-full">Continuer vers mes disponibilités</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h3 class="sub">6.2 · Mon profil</h3>
+  <div class="mk" style="max-width:860px">
+    <div class="mk-top"><span class="mk-logo">Ap<i>i</i>k</span><nav><span>Propositions</span><span>Mon agenda</span><span>Mes heures</span><span class="on">Mon profil</span></nav></div>
+    <div class="mk-body">
+      <div class="row spread top">
+        <div><h3>Sofia D.</h3><small>Rennes · se déplace jusqu'à 15 km · 4 missions chez Léo Lagrange</small></div>
+        <div class="row"><span class="bdg bdg-dip">◆ BPJEPS</span><span class="bdg bdg-dip">◆ SST</span><span class="bdg bdg-hon">✓ Honorabilité vérifiée</span></div>
+      </div>
+      <div class="two">
+        <div class="pane remplit">
+          <div class="eyebrow tq">Mes disponibilités récurrentes</div>
+          <div class="scroll"><table class="plan">
+            <tr><th class="lbl">Bloc</th><th>Lun</th><th>Mar</th><th>Mer</th><th>Jeu</th><th>Ven</th></tr>
+            <tr><th class="lbl">Matin</th><td class="ok">✓</td><td class="ok">✓</td><td>—</td><td class="ok">✓</td><td class="ok">✓</td></tr>
+            <tr><th class="lbl">Méridienne</th><td class="ok">✓</td><td class="ok">✓</td><td class="ok">✓</td><td class="ok">✓</td><td>—</td></tr>
+            <tr><th class="lbl">Soir</th><td>—</td><td class="ok">✓</td><td class="ok">✓</td><td class="ok">✓</td><td class="ok">✓</td></tr>
+          </table></div>
+          <span class="btn b-s b-sm" style="align-self:flex-start">Modifier mes disponibilités</span>
+        </div>
+        <div class="pane">
+          <div class="eyebrow">Ce que voient les structures</div>
+          <div class="mc">
+            <div class="mc-h tq">Sofia D.<span>3,1 km</span></div>
+            <div class="mc-b"><div class="titre">BPJEPS · disponible matin, midi, soir</div><small>Déjà venue 4 fois · 92 % de créneaux honorés</small></div>
+          </div>
+          <small>Ton nom, ta commune, tes badges et ton historique. Ni ton adresse exacte, ni ton téléphone, ni tes justificatifs : ils ne sont transmis qu'au moment de la confirmation.</small>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h3 class="sub">6.3 · Propositions</h3>
+  <div class="mk" style="max-width:860px">
+    <div class="mk-top"><span class="mk-logo">Ap<i>i</i>k</span><nav><span class="on">Propositions</span><span>Mon agenda</span><span>Mes heures</span><span>Mon profil</span></nav></div>
+    <div class="mk-body">
+      <div class="row spread top">
+        <div><h3>3 créneaux pour ta semaine</h3><small>Classés par ce qu'ils comblent dans ton planning, pas par date de publication.</small></div>
+        <span class="st st-ouv">◔ 4 h manquantes</span>
+      </div>
+      <div class="mc">
+        <div class="mc-h">Demain · jeudi 17 · 16h30 – 18h30<span>+ 2 h</span></div>
+        <div class="mc-b">
+          <div class="titre">Accueil du soir, enfants 6-10 ans</div>
+          <small>Assoc. Léo Lagrange · École J. Prévert · 3,1 km · 13,20 € brut</small>
+          <p>Ce créneau se colle à ta méridienne du jeudi. Tu y es déjà allée quatre fois.</p>
+          <div class="row"><span class="btn b-t b-sm">Je prends le créneau</span><span class="btn b-g b-sm">Plus tard</span></div>
+        </div>
+      </div>
+      <div class="mc">
+        <div class="mc-h">Mercredi 23 · 08h30 – 17h30<span>+ 8 h</span></div>
+        <div class="mc-b">
+          <div class="titre">Journée complète en centre de loisirs</div>
+          <small>Ville de Rennes · Centre Cleunay · 5,4 km · 13,80 € brut · réponse avant vendredi 18h</small>
+          <div class="row"><span class="btn b-t b-sm">Je prends le créneau</span><span class="btn b-g b-sm">Voir le détail</span></div>
+        </div>
+      </div>
+      <div class="mc">
+        <div class="mc-h">Lundi 21 · 11h30 – 13h30<span>+ 2 h</span></div>
+        <div class="mc-b">
+          <div class="titre">Pause méridienne, maternelle</div>
+          <small>Ville de Rennes · École Trégain · 7,2 km · 12,90 € brut</small>
+          <div class="row"><span class="btn b-t b-sm">Je prends le créneau</span><span class="btn b-g b-sm">Plus tard</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h3 class="sub">6.4 · Mes heures, trois employeurs réunis</h3>
+  <div class="mk" style="max-width:860px">
+    <div class="mk-top"><span class="mk-logo">Ap<i>i</i>k</span><nav><span>Propositions</span><span>Mon agenda</span><span class="on">Mes heures</span><span>Mon profil</span></nav></div>
+    <div class="mk-body">
+      <h3>Bonjour Sofia, il te manque 4 heures</h3>
+      <small>Semaine du 14 septembre · 3 employeurs · objectif 35 h</small>
+      <div class="row spread" style="margin-top:4px"><span style="font-weight:600">31 h confirmées</span><span style="color:#8A5B00;font-weight:600">2 h en attente</span><span style="color:#C2410C;font-weight:600">4 h à trouver</span></div>
+      <div class="jauge"><i class="fait" style="width:78%"></i><i class="att" style="width:6%"></i></div>
+      <div class="two">
+        <div class="pane remplit">
+          <div class="eyebrow tq">Par employeur</div>
+          <div class="row spread"><span>Assoc. Léo Lagrange</span><strong>14 h</strong></div>
+          <div class="row spread"><span>Ville de Rennes</span><strong>11 h</strong></div>
+          <div class="row spread"><span>Centre social Villejean</span><strong>6 h</strong></div>
+          <hr>
+          <div class="row spread"><strong>Total confirmé</strong><strong style="font-family:var(--titre);font-size:22px">31 h</strong></div>
+          <small>Relevé consolidé téléchargeable en fin de mois, tous employeurs confondus.</small>
+        </div>
+        <div class="pane manque">
+          <div class="eyebrow">Par bloc horaire</div>
+          <div class="row spread"><span>Matin · 07h30 – 08h30</span><strong>5 h · complet</strong></div>
+          <div class="row spread"><span>Méridienne · 11h30 – 13h30</span><strong>10 h · complet</strong></div>
+          <div class="row spread"><span>Soir · 16h30 – 18h30</span><strong style="color:#C2410C">6 h · 2 h libres</strong></div>
+          <div class="row spread"><span>Mercredi · journée</span><strong style="color:#C2410C">0 h · 8 h libres</strong></div>
+          <span class="btn b-p b-full">Voir les créneaux qui comblent mes trous</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<section class="task" id="t7">
+  <div class="task-head"><span class="tag">T7</span><h2>Décliner les maquettes en responsive</h2><span class="est">3 h · terminé</span></div>
+  <p class="intro">Trois largeurs de référence, imposées par le sujet : 390 pour le mobile, 768 pour la tablette, 1440 pour le poste de travail. Le même écran, l'alerte du soir côté structure, décliné sur les trois.</p>
+
+  <div class="devices">
+    <div class="dev">
+      <span class="dev-cap">Mobile · 390 px</span>
+      <div class="mk w390">
+        <div class="mk-top"><span class="mk-logo">Ap<i>i</i>k</span><span style="margin-left:auto">Rennes</span></div>
+        <div class="mk-body" style="padding:14px;gap:12px">
+          <div class="seuil s-ko"><span class="pic">⚠</span><div><strong>Il te manque 1 animateur</strong><span>Demain jeudi, soir, 16h30 – 18h30. Sans remplacement, 14 enfants ne peuvent pas être accueillis.</span></div></div>
+          <span class="btn b-p b-full">Voir les 3 réponses</span>
+          <hr>
+          <div class="row spread" style="font-size:12.5px;font-weight:600"><span>Matin</span><span style="color:#C4302B">5 / 6 ⚠</span></div>
+          <div class="row spread" style="font-size:12.5px;font-weight:600"><span>Méridienne</span><span style="color:#8A5B00">11 / 12 ⧗</span></div>
+          <div class="row spread" style="font-size:12.5px;font-weight:600"><span>Soir</span><span style="color:#C4302B">5 / 6 ⚠</span></div>
+          <div class="mk-top" style="margin:8px -14px -14px;border-radius:0;justify-content:space-around;font-size:11.5px"><span class="on">Planning</span><span>Équipe</span><span>Contrats</span><span>Réglages</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="dev">
+      <span class="dev-cap">Tablette · 768 px</span>
+      <div class="mk w768">
+        <div class="mk-top"><span class="mk-logo">Ap<i>i</i>k</span><nav><span class="on">Planning</span><span>Équipe</span><span>Contrats</span></nav></div>
+        <div class="mk-body" style="padding:16px;gap:14px">
+          <div class="row spread top"><div><h3 style="font-size:19px">Semaine du 14 septembre</h3><small>PEDT actif · 214 enfants</small></div><span class="st st-ann">⚠ 2 hors-taux</span></div>
+          <div class="scroll"><table class="plan">
+            <tr><th class="lbl">Bloc</th><th>Lun</th><th>Mar</th><th>Mer</th><th>Jeu</th><th>Ven</th></tr>
+            <tr><th class="lbl">Matin</th><td class="ok">6/6</td><td class="ok">6/6</td><td class="ok">4/4</td><td class="ko">5/6</td><td class="ok">6/6</td></tr>
+            <tr><th class="lbl">Midi</th><td class="ok">12/12</td><td class="ok">12/12</td><td class="ok">4/4</td><td class="att">11/12</td><td class="ok">12/12</td></tr>
+            <tr><th class="lbl">Soir</th><td class="ok">6/6</td><td class="ok">6/6</td><td class="ok">4/4</td><td class="ko">5/6</td><td class="ok">6/6</td></tr>
+          </table></div>
+          <div class="pane manque" style="padding:12px">
+            <div class="eyebrow">Ce qui manque</div>
+            <div class="row spread top"><span style="font-size:13px">Jeudi 17 · matin et soir · 1 animateur par bloc</span><span class="btn b-p b-sm">Publier les 2 créneaux</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="dev" style="margin-top:22px">
+    <span class="dev-cap">Poste de travail · 1440 px, deux colonnes</span>
+    <div class="mk w1440">
+      <div class="mk-top"><span class="mk-logo">Ap<i>i</i>k</span><nav><span class="on">Planning</span><span>Créneaux publiés</span><span>Mon équipe</span><span>Contrats</span></nav><span style="margin-left:auto">Assoc. Léo Lagrange</span></div>
+      <div class="mk-body">
+        <div class="two">
+          <div class="pane manque">
+            <div class="eyebrow">Ce qui manque</div>
+            <div class="seuil s-ko"><span class="pic">⚠</span><div><strong>Jeudi 17, matin et soir</strong><span>5 animateurs confirmés sur 6 requis, sur chacun des deux blocs.</span></div></div>
+            <div class="row"><span class="btn b-p b-sm">Publier les 2 créneaux</span><span class="btn b-s b-sm">Réduire l'effectif</span></div>
+          </div>
+          <div class="pane remplit">
+            <div class="eyebrow tq">Ce qui se remplit</div>
+            <div class="row spread top"><div><h4>Sofia D. — 94 / 100</h4><small>BPJEPS · 3,1 km · déjà venue 4 fois</small></div><span class="btn b-p b-sm">Confirmer</span></div>
+            <hr>
+            <div class="row spread top"><div><h4>Malik K. — 81 / 100</h4><small>BAFA · 6,8 km · première mission</small></div><span class="btn b-s b-sm">Confirmer</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="cols" style="margin-top:26px">
+    <div class="card">
+      <h4 class="mini">Règles de déclinaison</h4>
+      <div class="scroll"><table>
+        <tr><th>Élément</th><th>390</th><th>768</th><th>1440</th></tr>
+        <tr><td>Navigation</td><td>Barre basse, 4 entrées</td><td>Barre haute, 3 entrées</td><td>Barre haute complète</td></tr>
+        <tr><td>Manque / remplit</td><td>Empilé, le manque en premier</td><td>Empilé, planning intercalé</td><td>Deux colonnes côte à côte</td></tr>
+        <tr><td>Planning</td><td>Liste par bloc</td><td>Grille défilante</td><td>Grille entière</td></tr>
+        <tr><td>Boutons</td><td>Pleine largeur</td><td>Largeur du contenu</td><td>Largeur du contenu</td></tr>
+        <tr><td>Marge intérieure</td><td>14 px</td><td>16 px</td><td>18 px</td></tr>
+      </table></div>
+    </div>
+    <div class="card" style="flex:0 1 340px">
+      <h4 class="mini">Invariants sur les trois largeurs</h4>
+      <p style="font-size:13.5px;color:var(--texte-doux)">L'alerte de seuil est toujours le premier élément lu. Une seule action primaire. Aucune information n'est retirée en mobile : elle est repliée, jamais supprimée, parce que la directrice qui reçoit l'alerte à 6h45 est sur son téléphone et doit décider avec les mêmes éléments qu'au bureau.</p>
+      <p style="font-size:13.5px;color:var(--texte-doux);margin-top:10px">Le tableau de planning est le seul élément qui défile horizontalement, dans son propre conteneur. Le corps de page ne défile jamais latéralement.</p>
+    </div>
+  </div>
+</section>
+
+<section class="task" id="t8">
+  <div class="task-head"><span class="tag">T8</span><h2>Vérifier l'accessibilité sur les maquettes</h2><span class="est">2 h · terminé</span></div>
+  <p class="intro">Contrôle passé sur les neuf écrans avant intégration. Trois couples de couleurs échouaient, tous corrigés dans les variables de T2 plutôt que dans les écrans un par un.</p>
+
+  <h3 class="sub">Contrastes mesurés</h3>
+  <div class="scroll"><table>
+    <tr><th>Couple</th><th>Ratio</th><th>Seuil visé</th><th>Verdict</th><th>Décision</th></tr>
+    <tr><td>Encre Nuit sur Crème</td><td>15,51:1</td><td>4,5:1</td><td class="ok">Conforme AAA</td><td>Conservé, c'est le couple de base</td></tr>
+    <tr><td>Encre Nuit sur Sable</td><td>13,72:1</td><td>4,5:1</td><td class="ok">Conforme AAA</td><td>Conservé</td></tr>
+    <tr><td>Crème sur Mandarine Pik</td><td>2,44:1</td><td>4,5:1</td><td class="ko">Échec</td><td>Texte de bouton passé en Encre Nuit</td></tr>
+    <tr><td>Encre Nuit sur Mandarine Pik</td><td>6,35:1</td><td>4,5:1</td><td class="ok">Conforme AA</td><td>Nouveau couple du bouton primaire</td></tr>
+    <tr><td>Encre Nuit sur Turquoise</td><td>6,61:1</td><td>4,5:1</td><td class="ok">Conforme AA</td><td>Bouton d'acceptation côté animateur</td></tr>
+    <tr><td>Mandarine Pik en texte sur Crème</td><td>2,44:1</td><td>4,5:1</td><td class="ko">Échec</td><td>Liens et étiquettes passés en Mandarine Encre #C2410C</td></tr>
+    <tr><td>Mandarine Encre sur Crème</td><td>4,88:1</td><td>4,5:1</td><td class="ok">Conforme AA</td><td>Variable <code>texte/lien</code></td></tr>
+    <tr><td>Vert #1FB668 en texte sur Crème</td><td>2,49:1</td><td>4,5:1</td><td class="ko">Échec</td><td>Texte des états conformes en #0E7C4A, soit 4,95:1</td></tr>
+    <tr><td>Rouge #F0453D en texte sur Crème</td><td>3,52:1</td><td>4,5:1</td><td class="ko">Échec</td><td>Texte hors-taux en #C4302B, soit 5,20:1</td></tr>
+    <tr><td>Bordure de bouton #E5651F sur Crème</td><td>3,19:1</td><td>3:1</td><td class="ok">Conforme</td><td>La bordure porte la forme du bouton</td></tr>
+    <tr><td>Texte secondaire #6E6F91 sur Crème</td><td>4,56:1</td><td>4,5:1</td><td class="ok">Conforme, de justesse</td><td>Interdit en dessous de 12 px</td></tr>
+  </table></div>
+  <div class="note alerte"><strong>Le point à retenir pour la soutenance :</strong> une charte chaleureuse et vive produit presque toujours des aplats sur lesquels le blanc n'est pas lisible. Le réflexe « texte blanc sur couleur vive » a coûté trois corrections. Les couleurs vives restent des fonds, jamais des textes, et le texte posé dessus est l'Encre Nuit.</div>
+
+  <h3 class="sub">Les cinq autres contrôles</h3>
+  <div class="cols">
+    <div class="card">
+      <h4 class="mini">Information jamais portée par la seule couleur</h4>
+      <div class="row"><span class="st st-pou">✓ Pourvue</span><span class="st st-dif">⧗ Diffusée</span><span class="st st-ann">✕ Annulée</span></div>
+      <p style="font-size:13.5px;color:var(--texte-doux);margin-top:10px">Chaque état porte un signe et un mot. Les cases du planning affichent le rapport chiffré 5 / 6 en plus du fond coloré. Les badges de qualification se distinguent par un losange, un demi-cercle ou un cercle vide.</p>
+      <h4 class="mini" style="margin-top:20px">Cibles tactiles</h4>
+      <p style="font-size:13.5px;color:var(--texte-doux)">44 px de haut minimum sur tout élément actionnable, y compris les puces de disponibilité et les cases du planning. L'espacement entre deux cibles ne descend jamais sous 8 px, pour éviter la confirmation par erreur d'un créneau voisin.</p>
+    </div>
+    <div class="card">
+      <h4 class="mini">Focus clavier</h4>
+      <div class="row"><span class="btn b-f">Confirmer Sofia D.</span></div>
+      <p style="font-size:13.5px;color:var(--texte-doux);margin-top:12px">Anneau Jaune Peps de 3 px, décalé de 2 px, posé sur Encre Nuit pour rester visible sur les fonds clairs comme sur les aplats mandarine. Il n'est jamais supprimé, y compris sur les éléments cliquables non natifs.</p>
+      <h4 class="mini" style="margin-top:20px">Ordre de lecture et de tabulation</h4>
+      <p style="font-size:13.5px;color:var(--texte-doux)">Numéroté dans Figma sur chaque écran. Sur le planning : alerte de seuil, action de publication, grille, panneau des réponses. L'alerte précède la grille dans l'ordre du code, même quand elle est affichée à droite en version large.</p>
+    </div>
+  </div>
+
+  <h3 class="sub">Critères RGAA 4.1 couverts par ce lot</h3>
+  <div class="scroll"><table>
+    <tr><th>Critère</th><th>Ce qui a été fait au design</th></tr>
+    <tr><td>3.1 · information par la couleur</td><td>Signe et libellé sur chaque état, rapport chiffré dans le planning</td></tr>
+    <tr><td>3.2 et 3.3 · contrastes texte et composants</td><td>Onze couples mesurés, trois corrigés dans les variables</td></tr>
+    <tr><td>9.1 · hiérarchie de titres</td><td>Un seul titre de niveau 1 par écran, posé dans la maquette et non à l'intégration</td></tr>
+    <tr><td>10.7 · visibilité du focus</td><td>Anneau défini comme variable, appliqué à tous les composants interactifs</td></tr>
+    <tr><td>11.1 et 11.10 · étiquettes et contrôle de saisie</td><td>Chaque champ a une étiquette visible et persistante, chaque erreur dit quoi corriger</td></tr>
+    <tr><td>12.8 · ordre de tabulation</td><td>Ordre annoté sur chaque frame, cohérent avec l'ordre visuel</td></tr>
+    <tr><td>1.1 · alternatives textuelles</td><td>Aucune information portée par une image seule ; les pictogrammes d'état sont doublés d'un texte</td></tr>
+  </table></div>
+  <div class="note"><strong>Ce qui reste à faire à l'intégration :</strong> le contrôle du design ne couvre ni la navigation au clavier réelle, ni les rôles ARIA, ni les messages d'erreur annoncés aux lecteurs d'écran. Le dire en soutenance vaut mieux que de laisser croire à une conformité totale, qui n'est de toute façon pas attendue sur un POC de onze jours.</div>
+</section>
+
+<section class="task">
+  <h2 style="font-size:26px">Où va ce dossier</h2>
+  <p class="intro" style="margin-top:10px">Les huit tâches de la liste ClickUp sont produites. Le lot alimente maintenant trois choses : l'intégration des tokens en début de production, le prototype cliquable qui sert de filet si la démo live échoue, et la partie design du support de pitch. Les deux tâches design restantes du board — les pages publiques porteuses du SEO et l'optimisation des assets exportés — s'appuient sur les variables de T2 et n'attendent plus rien d'autre.</p>
+  <div class="scroll"><table>
+    <tr><th>Livrable</th><th>Estimation ClickUp</th><th>État</th></tr>
+    <tr><td>T1 · Fichier Figma et arborescence</td><td>1 h</td><td class="ok">Produit</td></tr>
+    <tr><td>T2 · Styles et variables</td><td>2 h 30</td><td class="ok">Produit, avec correction des couples de couleurs</td></tr>
+    <tr><td>T3 · Bibliothèque de composants</td><td>4 h</td><td class="ok">Produit, sept familles avec états</td></tr>
+    <tr><td>T4 · Wireframes des parcours critiques</td><td>3 h</td><td class="ok">Produit, trois parcours</td></tr>
+    <tr><td>T5 · Écrans structure</td><td>5 h</td><td class="ok">Produit, cinq écrans</td></tr>
+    <tr><td>T6 · Écrans animateur</td><td>4 h</td><td class="ok">Produit, quatre écrans</td></tr>
+    <tr><td>T7 · Déclinaison responsive</td><td>3 h</td><td class="ok">Produit, 390 / 768 / 1440</td></tr>
+    <tr><td>T8 · Contrôle d'accessibilité</td><td>2 h</td><td class="ok">Produit, trois échecs corrigés</td></tr>
+  </table></div>
+</section>
+</main>
+<footer class="wrap" style="padding:34px 24px 60px;border-top:1px solid var(--bord);color:var(--texte-doux);font-size:13px">
+  Apik · lot design du projet InteriMatch · charte Fredoka et Inter, Mandarine Pik et Turquoise Confiance.
+</footer>
+</body>
+</html>
