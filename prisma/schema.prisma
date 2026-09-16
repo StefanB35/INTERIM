@@ -1,0 +1,856 @@
+// =============================================================================
+// Apik — Modèle physique de données (PostgreSQL)
+// Plateforme de mise en relation entre accueils périscolaires et animateurs
+//
+// Convention : identifiants techniques en anglais, commentaires en français.
+// Montants en centimes (Int) pour éviter les flottants.
+// Horodatages en UTC (timestamptz), heures de créneau en minutes depuis minuit.
+// =============================================================================
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// =============================================================================
+// ENUMS
+// =============================================================================
+
+enum UserRole {
+  ANIMATOR
+  EMPLOYER
+  ADMIN
+}
+
+enum AccountStatus {
+  PENDING_VERIFICATION
+  ACTIVE
+  SUSPENDED
+  DELETED // soft delete RGPD : données personnelles purgées, coquille conservée
+}
+
+enum LegalForm {
+  ASSOCIATION
+  COMMUNE
+  EPCI
+  ENTREPRISE
+  OTHER
+}
+
+enum OrgMemberRole {
+  OWNER
+  ADMIN
+  SITE_DIRECTOR // directeur d'accueil, périmètre limité à ses sites
+}
+
+// Blocs périscolaires (décret n° 2014-1320)
+enum SlotBlock {
+  MORNING   // accueil du matin
+  LUNCH     // pause méridienne
+  EVENING   // accueil du soir
+  WEDNESDAY // mercredi avec classe le matin
+}
+
+enum AgeGroup {
+  UNDER_6
+  SIX_AND_OVER
+}
+
+// Niveaux au sens de l'article R227-12 du CASF (quotas 50 / 30 / 20 %)
+enum QualificationLevel {
+  QUALIFIED   // BAFA ou équivalent — minimum 50 % de l'équipe
+  TRAINEE     // stagiaire en formation — maximum 30 %
+  UNQUALIFIED // sans qualification — maximum 20 %
+}
+
+enum QualificationType {
+  BAFA
+  BAFD
+  BAFA_STAGIAIRE
+  CPJEPS
+  BPJEPS
+  DEJEPS
+  CAP_AEPE
+  EQUIVALENT
+  OTHER
+}
+
+// Vérification au titre de l'article R227-3 du CASF (fichier consulté via TAM)
+enum HonorabilityStatus {
+  NOT_SUBMITTED
+  PENDING
+  VERIFIED
+  REJECTED
+  EXPIRED
+}
+
+enum ComplianceStatus {
+  NOT_EVALUATED
+  COMPLIANT
+  STAFF_SHORTAGE       // effectif insuffisant au regard du taux d'encadrement
+  QUALIFICATION_BREACH // quotas R227-12 non respectés
+  CRITICAL             // les deux
+}
+
+enum MissionStatus {
+  DRAFT
+  OPEN
+  FILLED
+  COMPLETED
+  CANCELLED
+  EXPIRED // créneau passé sans pourvoi
+}
+
+enum MissionTrigger {
+  MANUAL
+  COMPLIANCE_ENGINE // déclenchement automatique sur détection de non-conformité
+  RESCHEDULE        // désistement en cascade
+}
+
+enum UrgencyLevel {
+  STANDARD
+  URGENT     // sous 72 h
+  CRITICAL   // créneau du lendemain
+}
+
+enum ApplicationOrigin {
+  MATCHING
+  SPONTANEOUS
+  DIRECT_INVITE
+}
+
+enum ApplicationStatus {
+  SUGGESTED
+  NOTIFIED
+  APPLIED
+  SHORTLISTED
+  ACCEPTED
+  REJECTED
+  WITHDRAWN
+  EXPIRED
+}
+
+enum AssignmentSource {
+  INTERNAL_STAFF // salarié permanent de la structure, hors plateforme
+  APIK_MISSION   // animateur placé via Apik
+}
+
+enum AssignmentStatus {
+  PLANNED
+  CONFIRMED
+  CANCELLED
+  NO_SHOW
+  COMPLETED
+}
+
+enum ContractStatus {
+  DRAFT
+  GENERATED
+  SENT
+  SIGNED_BY_ANIMATOR
+  SIGNED_BY_EMPLOYER
+  ACTIVE
+  COMPLETED
+  TERMINATED
+}
+
+enum DocumentType {
+  ID_CARD
+  RESIDENCE_PERMIT
+  DIPLOMA
+  BANK_DETAILS
+  MISSION_CONTRACT
+  OTHER
+}
+
+enum NotificationChannel {
+  IN_APP
+  DISCORD
+  EMAIL
+}
+
+enum OutboxStatus {
+  PENDING
+  DELIVERED
+  FAILED
+  DEAD // abandonné après épuisement des tentatives
+}
+
+enum ConsentPurpose {
+  TERMS_OF_SERVICE
+  MATCHING_NOTIFICATIONS
+  PROFILE_VISIBILITY
+  DOCUMENT_STORAGE
+}
+
+enum DataRequestType {
+  ACCESS
+  RECTIFICATION
+  ERASURE
+  PORTABILITY
+}
+
+enum DataRequestStatus {
+  RECEIVED
+  IN_PROGRESS
+  COMPLETED
+  REFUSED
+}
+
+enum GeoLevel {
+  COMMUNE
+  DEPARTMENT
+  REGION
+  NATIONAL
+}
+
+// =============================================================================
+// IDENTITÉ ET AUTHENTIFICATION
+// =============================================================================
+
+model User {
+  id              String        @id @default(uuid()) @db.Uuid
+  email           String        @unique @db.Citext
+  passwordHash    String        @db.VarChar(255) // argon2id
+  role            UserRole
+  status          AccountStatus @default(PENDING_VERIFICATION)
+  emailVerifiedAt DateTime?     @db.Timestamptz(3)
+  lastLoginAt     DateTime?     @db.Timestamptz(3)
+  failedLogins    Int           @default(0)
+  lockedUntil     DateTime?     @db.Timestamptz(3)
+  createdAt       DateTime      @default(now()) @db.Timestamptz(3)
+  updatedAt       DateTime      @updatedAt @db.Timestamptz(3)
+  deletedAt       DateTime?     @db.Timestamptz(3)
+
+  animatorProfile AnimatorProfile?
+  memberships     OrganizationMember[]
+  refreshTokens   RefreshToken[]
+  documents       StoredDocument[]
+  notifications   Notification[]
+  consents        Consent[]
+  dataRequests    DataRequest[]
+
+  @@index([status, role])
+  @@map("users")
+}
+
+model RefreshToken {
+  id        String    @id @default(uuid()) @db.Uuid
+  userId    String    @db.Uuid
+  tokenHash String    @unique @db.VarChar(255) // jamais le token en clair
+  expiresAt DateTime  @db.Timestamptz(3)
+  revokedAt DateTime? @db.Timestamptz(3)
+  userAgent String?   @db.VarChar(255)
+  ipAddress String?   @db.Inet
+  createdAt DateTime  @default(now()) @db.Timestamptz(3)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, expiresAt])
+  @@map("refresh_tokens")
+}
+
+// =============================================================================
+// CÔTÉ EMPLOYEUR : ORGANISATION, SITES, CRÉNEAUX
+// =============================================================================
+
+model Organization {
+  id              String    @id @default(uuid()) @db.Uuid
+  name            String    @db.VarChar(180)
+  legalForm       LegalForm
+  siret           String?   @unique @db.Char(14)
+  nafCode         String?   @db.VarChar(6)
+  addressLine     String    @db.VarChar(255)
+  postalCode      String    @db.Char(5)
+  city            String    @db.VarChar(120)
+  inseeCode       String?   @db.Char(5)
+  contactEmail    String    @db.VarChar(255)
+  contactPhone    String?   @db.VarChar(30)
+  tamDeclarationNumber String? @db.VarChar(40) // n° d'organisateur déclaré (TAM)
+  isTamVerified   Boolean   @default(false)
+  createdAt       DateTime  @default(now()) @db.Timestamptz(3)
+  updatedAt       DateTime  @updatedAt @db.Timestamptz(3)
+
+  members     OrganizationMember[]
+  sites       Site[]
+  staff       StaffMember[]
+  missions    Mission[]
+  contracts   Contract[]
+
+  @@index([postalCode])
+  @@map("organizations")
+}
+
+model OrganizationMember {
+  id             String        @id @default(uuid()) @db.Uuid
+  userId         String        @db.Uuid
+  organizationId String        @db.Uuid
+  role           OrgMemberRole @default(SITE_DIRECTOR)
+  invitedAt      DateTime      @default(now()) @db.Timestamptz(3)
+  acceptedAt     DateTime?     @db.Timestamptz(3)
+
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  scopedSites  SiteAccess[]
+
+  @@unique([userId, organizationId])
+  @@map("organization_members")
+}
+
+// Restriction de périmètre : un directeur de site ne voit que ses sites
+model SiteAccess {
+  memberId String @db.Uuid
+  siteId   String @db.Uuid
+
+  member OrganizationMember @relation(fields: [memberId], references: [id], onDelete: Cascade)
+  site   Site               @relation(fields: [siteId], references: [id], onDelete: Cascade)
+
+  @@id([memberId, siteId])
+  @@map("site_access")
+}
+
+// Accueil périscolaire physique. Rattaché à un établissement de l'Annuaire de
+// l'éducation (data.gouv.fr) via son code UAI — le référentiel complet des
+// écoles est stocké dans MongoDB pour la recherche plein texte.
+model Site {
+  id             String   @id @default(uuid()) @db.Uuid
+  organizationId String   @db.Uuid
+  name           String   @db.VarChar(180)
+  uaiCode        String?  @db.Char(8) // code établissement (Annuaire de l'éducation)
+  schoolName     String?  @db.VarChar(255) // dénormalisé depuis l'annuaire
+  addressLine    String   @db.VarChar(255)
+  postalCode     String   @db.Char(5)
+  city           String   @db.VarChar(120)
+  inseeCode      String?  @db.Char(5)
+  latitude       Decimal  @db.Decimal(9, 6)
+  longitude      Decimal  @db.Decimal(9, 6)
+  hasPedt        Boolean  @default(false) // projet éducatif territorial
+  pedtValidUntil DateTime? @db.Date
+  isActive       Boolean  @default(true)
+  createdAt      DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt      DateTime @updatedAt @db.Timestamptz(3)
+
+  organization Organization  @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  sessions     CareSession[]
+  missions     Mission[]
+  accesses     SiteAccess[]
+
+  @@index([organizationId, isActive])
+  @@index([postalCode])
+  @@index([latitude, longitude]) // pré-filtre bounding box avant Haversine
+  @@map("sites")
+}
+
+// Créneau d'accueil daté. Unité centrale du modèle : c'est sur cette entité que
+// le moteur de conformité calcule le taux d'encadrement requis.
+model CareSession {
+  id            String    @id @default(uuid()) @db.Uuid
+  siteId        String    @db.Uuid
+  date          DateTime  @db.Date
+  block         SlotBlock
+  startMinutes  Int       @db.SmallInt // minutes depuis minuit (ex. 450 = 07h30)
+  endMinutes    Int       @db.SmallInt
+  childrenUnder6     Int  @default(0) @db.SmallInt
+  children6AndOver   Int  @default(0) @db.SmallInt
+
+  // --- Résultats du moteur de conformité (dénormalisés pour le tableau de bord)
+  requiredStaffUnder6   Int @default(0) @db.SmallInt
+  requiredStaff6AndOver Int @default(0) @db.SmallInt
+  requiredStaffTotal    Int @default(0) @db.SmallInt
+  assignedStaffTotal    Int @default(0) @db.SmallInt
+  qualifiedCount        Int @default(0) @db.SmallInt
+  traineeCount          Int @default(0) @db.SmallInt
+  unqualifiedCount      Int @default(0) @db.SmallInt
+  complianceStatus      ComplianceStatus @default(NOT_EVALUATED)
+  complianceComputedAt  DateTime?        @db.Timestamptz(3)
+  rulesetVersion        String?          @db.VarChar(20) // traçabilité du calcul
+
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @db.Timestamptz(3)
+
+  site           Site             @relation(fields: [siteId], references: [id], onDelete: Cascade)
+  assignments    Assignment[]
+  missionSlots   MissionSlot[]
+
+  @@unique([siteId, date, block])
+  @@index([date, complianceStatus]) // requête du cron n8n de relance à 18h
+  @@map("care_sessions")
+}
+
+// Barème réglementaire chargé en base plutôt que codé en dur : rend le moteur
+// testable et auditable, et permet d'absorber une évolution du décret.
+model SupervisionRule {
+  id                String   @id @default(uuid()) @db.Uuid
+  ageGroup          AgeGroup
+  requiresPedt      Boolean
+  durationOver5h    Boolean
+  childrenPerStaff  Int      @db.SmallInt // ex. 10, 14 ou 18
+  legalReference    String   @db.VarChar(120) // ex. "CASF art. R227-16"
+  version           String   @db.VarChar(20)
+  effectiveFrom     DateTime @db.Date
+  effectiveUntil    DateTime? @db.Date
+
+  @@unique([ageGroup, requiresPedt, durationOver5h, version])
+  @@map("supervision_rules")
+}
+
+// Salariés permanents de la structure : ils comptent dans le taux d'encadrement
+// mais ne sont pas des utilisateurs de la plateforme.
+model StaffMember {
+  id                 String             @id @default(uuid()) @db.Uuid
+  organizationId     String             @db.Uuid
+  firstName          String             @db.VarChar(80)
+  lastName           String             @db.VarChar(80)
+  qualificationLevel QualificationLevel
+  honorabilityStatus HonorabilityStatus @default(NOT_SUBMITTED)
+  isActive           Boolean            @default(true)
+  createdAt          DateTime           @default(now()) @db.Timestamptz(3)
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  assignments  Assignment[]
+
+  @@index([organizationId, isActive])
+  @@map("staff_members")
+}
+
+// Présence d'une personne sur un créneau, quelle que soit son origine.
+// Contrainte d'exclusivité (staffMemberId XOR animatorProfileId) ajoutée par
+// migration SQL manuelle — voir docs/modele-physique.md.
+model Assignment {
+  id                 String             @id @default(uuid()) @db.Uuid
+  sessionId          String             @db.Uuid
+  source             AssignmentSource
+  staffMemberId      String?            @db.Uuid
+  animatorProfileId  String?            @db.Uuid
+  missionId          String?            @db.Uuid
+  // Instantané du niveau au moment de l'affectation : le quota R227-12 doit
+  // rester vérifiable a posteriori même si le profil évolue ensuite.
+  qualificationLevel QualificationLevel
+  // Bornes dénormalisées depuis CareSession : permettent une contrainte
+  // d'exclusion PostgreSQL qui interdit tout chevauchement d'horaire pour un
+  // même animateur. Le verrou est garanti par la base, pas par le service.
+  startsAt           DateTime           @db.Timestamptz(3)
+  endsAt             DateTime           @db.Timestamptz(3)
+  status             AssignmentStatus   @default(PLANNED)
+  cancelledAt        DateTime?          @db.Timestamptz(3)
+  cancellationReason String?            @db.VarChar(255)
+  createdAt          DateTime           @default(now()) @db.Timestamptz(3)
+  updatedAt          DateTime           @updatedAt @db.Timestamptz(3)
+
+  session   CareSession      @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  staff     StaffMember?     @relation(fields: [staffMemberId], references: [id], onDelete: SetNull)
+  animator  AnimatorProfile? @relation(fields: [animatorProfileId], references: [id], onDelete: SetNull)
+  mission   Mission?         @relation(fields: [missionId], references: [id], onDelete: SetNull)
+
+  @@unique([sessionId, animatorProfileId])
+  @@unique([sessionId, staffMemberId])
+  @@index([animatorProfileId, status])
+  @@map("assignments")
+}
+
+// =============================================================================
+// CÔTÉ ANIMATEUR
+// =============================================================================
+
+model AnimatorProfile {
+  id       String @id @default(uuid()) @db.Uuid
+  userId   String @unique @db.Uuid
+
+  firstName String   @db.VarChar(80)
+  lastName  String   @db.VarChar(80)
+  phone     String?  @db.VarChar(30)
+  birthDate DateTime @db.Date
+  bio       String?  @db.Text
+
+  // Localisation et mobilité
+  addressLine    String? @db.VarChar(255)
+  postalCode     String  @db.Char(5)
+  city           String  @db.VarChar(120)
+  inseeCode      String? @db.Char(5)
+  latitude       Decimal @db.Decimal(9, 6)
+  longitude      Decimal @db.Decimal(9, 6)
+  travelRadiusKm Int     @default(15) @db.SmallInt
+  hasVehicle     Boolean @default(false)
+
+  // Qualification consolidée, dérivée des diplômes validés
+  qualificationLevel QualificationLevel @default(UNQUALIFIED)
+  experienceYears    Int                @default(0) @db.SmallInt
+
+  // Honorabilité — verrou bloquant du moteur, jamais un critère pondéré
+  honorabilityStatus     HonorabilityStatus @default(NOT_SUBMITTED)
+  honorabilityCheckedAt  DateTime?          @db.Timestamptz(3)
+  honorabilityExpiresAt  DateTime?          @db.Date
+  honorabilityCheckedByOrgId String?        @db.Uuid
+
+  // Objectif de reconstitution d'un temps plein multi-employeurs
+  weeklyHoursTarget  Int     @default(35) @db.SmallInt
+  isSearching        Boolean @default(true)
+  profileCompletion  Int     @default(0) @db.SmallInt
+
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @db.Timestamptz(3)
+
+  user                  User                   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  qualifications        Qualification[]
+  availabilityRules     AvailabilityRule[]
+  availabilityExceptions AvailabilityException[]
+  applications          MissionApplication[]
+  assignments           Assignment[]
+  contracts             Contract[]
+  paymentDetails        PaymentDetails?
+
+  @@index([isSearching, honorabilityStatus])
+  @@index([latitude, longitude])
+  @@index([postalCode])
+  @@map("animator_profiles")
+}
+
+model Qualification {
+  id                String            @id @default(uuid()) @db.Uuid
+  animatorProfileId String            @db.Uuid
+  type              QualificationType
+  label             String?           @db.VarChar(180)
+  obtainedAt        DateTime?         @db.Date
+  expiresAt         DateTime?         @db.Date
+  isVerified        Boolean           @default(false)
+  verifiedAt        DateTime?         @db.Timestamptz(3)
+  documentId        String?           @db.Uuid
+
+  animator AnimatorProfile @relation(fields: [animatorProfileId], references: [id], onDelete: Cascade)
+  document StoredDocument? @relation(fields: [documentId], references: [id], onDelete: SetNull)
+
+  @@index([animatorProfileId, isVerified])
+  @@map("qualifications")
+}
+
+// Disponibilité récurrente : un animateur déclare « tous les lundis midi »
+model AvailabilityRule {
+  id                String    @id @default(uuid()) @db.Uuid
+  animatorProfileId String    @db.Uuid
+  weekday           Int       @db.SmallInt // 1 = lundi … 7 = dimanche
+  block             SlotBlock
+  startMinutes      Int       @db.SmallInt
+  endMinutes        Int       @db.SmallInt
+  validFrom         DateTime  @db.Date
+  validUntil        DateTime? @db.Date
+
+  animator AnimatorProfile @relation(fields: [animatorProfileId], references: [id], onDelete: Cascade)
+
+  @@unique([animatorProfileId, weekday, block, validFrom])
+  @@index([weekday, block])
+  @@map("availability_rules")
+}
+
+// Exception datée : indisponibilité ponctuelle ou disponibilité exceptionnelle
+model AvailabilityException {
+  id                String    @id @default(uuid()) @db.Uuid
+  animatorProfileId String    @db.Uuid
+  date              DateTime  @db.Date
+  block             SlotBlock?
+  isAvailable       Boolean // false = indispo, true = dispo hors récurrence
+  reason            String?   @db.VarChar(180)
+
+  animator AnimatorProfile @relation(fields: [animatorProfileId], references: [id], onDelete: Cascade)
+
+  @@unique([animatorProfileId, date, block])
+  @@index([date])
+  @@map("availability_exceptions")
+}
+
+// =============================================================================
+// DONNÉES SENSIBLES CHIFFRÉES (AES-256-GCM applicatif, clé hors base)
+// =============================================================================
+
+model PaymentDetails {
+  id                String   @id @default(uuid()) @db.Uuid
+  animatorProfileId String   @unique @db.Uuid
+  holderName        String   @db.VarChar(140)
+  ibanCiphertext    Bytes
+  ibanIv            Bytes
+  ibanAuthTag       Bytes
+  ibanLast4         String   @db.Char(4) // affichage sans déchiffrement
+  bicCiphertext     Bytes?
+  bicIv             Bytes?
+  bicAuthTag        Bytes?
+  keyVersion        Int      @default(1) // support de la rotation de clé
+  createdAt         DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt         DateTime @updatedAt @db.Timestamptz(3)
+
+  animator AnimatorProfile @relation(fields: [animatorProfileId], references: [id], onDelete: Cascade)
+
+  @@map("payment_details")
+}
+
+model StoredDocument {
+  id             String       @id @default(uuid()) @db.Uuid
+  ownerUserId    String       @db.Uuid
+  type           DocumentType
+  originalName   String       @db.VarChar(255)
+  mimeType       String       @db.VarChar(120)
+  sizeBytes      Int
+  storageKey     String       @unique @db.VarChar(255) // objet chiffré au repos
+  encryptionIv   Bytes
+  encryptionTag  Bytes
+  keyVersion     Int          @default(1)
+  checksumSha256 String       @db.Char(64)
+  uploadedAt     DateTime     @default(now()) @db.Timestamptz(3)
+  retentionUntil DateTime?    @db.Date // purge RGPD automatisée
+  deletedAt      DateTime?    @db.Timestamptz(3)
+
+  owner          User            @relation(fields: [ownerUserId], references: [id], onDelete: Cascade)
+  qualifications Qualification[]
+  contracts      Contract[]
+
+  @@index([ownerUserId, type])
+  @@index([retentionUntil])
+  @@map("stored_documents")
+}
+
+// =============================================================================
+// MISSIONS, MATCHING, CONTRATS
+// =============================================================================
+
+model Mission {
+  id             String  @id @default(uuid()) @db.Uuid
+  organizationId String  @db.Uuid
+  siteId         String  @db.Uuid
+  reference      String  @unique @db.VarChar(24) // ex. APIK-2026-000148
+  publicSlug     String  @unique @db.VarChar(180) // URL lisible pour le SEO
+
+  title       String @db.VarChar(180)
+  description String @db.Text
+  romeCode    String @default("G1203") @db.VarChar(8)
+
+  // Périmètre temporel
+  startDate  DateTime  @db.Date
+  endDate    DateTime  @db.Date
+  block      SlotBlock
+  totalHours Decimal   @db.Decimal(6, 2)
+
+  // Exigences — servent de verrous ou de critères de score
+  minQualificationLevel QualificationLevel @default(UNQUALIFIED)
+  minExperienceYears    Int                @default(0) @db.SmallInt
+  requiredPositions     Int                @default(1) @db.SmallInt
+  filledPositions       Int                @default(0) @db.SmallInt
+
+  // Rémunération. marketMedianRateCents provient de l'API France Travail et
+  // alimente la suggestion de tarif affichée à la création.
+  hourlyRateCents       Int
+  marketMedianRateCents Int?
+  marketSampleSize      Int?  @db.SmallInt
+
+  status     MissionStatus  @default(DRAFT)
+  trigger    MissionTrigger @default(MANUAL)
+  urgency    UrgencyLevel   @default(STANDARD)
+
+  publishedAt DateTime? @db.Timestamptz(3)
+  filledAt    DateTime? @db.Timestamptz(3)
+  expiresAt   DateTime? @db.Timestamptz(3)
+  createdAt   DateTime  @default(now()) @db.Timestamptz(3)
+  updatedAt   DateTime  @updatedAt @db.Timestamptz(3)
+
+  organization Organization         @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  site         Site                 @relation(fields: [siteId], references: [id], onDelete: Cascade)
+  slots        MissionSlot[]
+  applications MissionApplication[]
+  assignments  Assignment[]
+  contracts    Contract[]
+
+  @@index([status, startDate])
+  @@index([organizationId, status])
+  @@index([urgency, status])
+  @@map("missions")
+}
+
+// Une mission peut couvrir plusieurs créneaux (récurrence hebdomadaire)
+model MissionSlot {
+  missionId String @db.Uuid
+  sessionId String @db.Uuid
+
+  mission Mission     @relation(fields: [missionId], references: [id], onDelete: Cascade)
+  session CareSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  @@id([missionId, sessionId])
+  @@map("mission_slots")
+}
+
+// Candidature ou suggestion issue du moteur. Le détail complet du calcul
+// (tous les candidats évalués, verrous déclenchés, décomposition du score)
+// est journalisé dans MongoDB — ici on ne garde que le résultat retenu.
+model MissionApplication {
+  id                String            @id @default(uuid()) @db.Uuid
+  missionId         String            @db.Uuid
+  animatorProfileId String            @db.Uuid
+  origin            ApplicationOrigin @default(MATCHING)
+  status            ApplicationStatus @default(SUGGESTED)
+
+  score          Decimal? @db.Decimal(5, 2) // 0.00 à 100.00
+  matchRunId     String?  @db.VarChar(40)   // référence du document Mongo
+  algorithmVersion String? @db.VarChar(20)
+
+  notifiedAt  DateTime? @db.Timestamptz(3)
+  respondedAt DateTime? @db.Timestamptz(3)
+  decidedAt   DateTime? @db.Timestamptz(3)
+  message     String?   @db.Text
+  createdAt   DateTime  @default(now()) @db.Timestamptz(3)
+  updatedAt   DateTime  @updatedAt @db.Timestamptz(3)
+
+  mission  Mission         @relation(fields: [missionId], references: [id], onDelete: Cascade)
+  animator AnimatorProfile @relation(fields: [animatorProfileId], references: [id], onDelete: Cascade)
+
+  @@unique([missionId, animatorProfileId])
+  @@index([animatorProfileId, status])
+  @@index([missionId, score(sort: Desc)])
+  @@map("mission_applications")
+}
+
+// Contrat de mission. Les champs reprennent les mentions obligatoires
+// du contrat de mission (Code du travail, art. L1251-43).
+model Contract {
+  id                String @id @default(uuid()) @db.Uuid
+  missionId         String @db.Uuid
+  animatorProfileId String @db.Uuid
+  organizationId    String @db.Uuid
+  reference         String @unique @db.VarChar(24)
+
+  recourseReason      String   @db.VarChar(255) // motif du recours
+  jobTitle            String   @db.VarChar(180)
+  jobQualification    String   @db.VarChar(180)
+  workplaceAddress    String   @db.VarChar(255)
+  startDate           DateTime @db.Date
+  endDate             DateTime @db.Date
+  weeklyHours         Decimal  @db.Decimal(5, 2)
+  hourlyRateCents     Int
+  trialPeriodDays     Int      @db.SmallInt
+  collectiveAgreement String   @default("ÉCLAT") @db.VarChar(120)
+  specificClauses     String?  @db.Text
+
+  status      ContractStatus @default(DRAFT)
+  pdfDocumentId String?      @db.Uuid
+  generatedAt DateTime?      @db.Timestamptz(3)
+  sentAt      DateTime?      @db.Timestamptz(3)
+  signedAt    DateTime?      @db.Timestamptz(3)
+  terminatedAt DateTime?     @db.Timestamptz(3)
+  n8nExecutionId String?     @db.VarChar(60) // traçabilité du workflow nocode
+  createdAt   DateTime       @default(now()) @db.Timestamptz(3)
+  updatedAt   DateTime       @updatedAt @db.Timestamptz(3)
+
+  mission      Mission         @relation(fields: [missionId], references: [id], onDelete: Restrict)
+  animator     AnimatorProfile @relation(fields: [animatorProfileId], references: [id], onDelete: Restrict)
+  organization Organization    @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  pdfDocument  StoredDocument? @relation(fields: [pdfDocumentId], references: [id], onDelete: SetNull)
+
+  @@index([animatorProfileId, status])
+  @@index([organizationId, startDate])
+  @@map("contracts")
+}
+
+// =============================================================================
+// DONNÉES PUBLIQUES AGRÉGÉES
+// =============================================================================
+
+// Indicateurs calculés par le CLI d'import à partir de l'API France Travail et
+// de la DARES. Consommés par la carte de tension et la suggestion de tarif.
+model MarketIndicator {
+  id                    String   @id @default(uuid()) @db.Uuid
+  romeCode              String   @db.VarChar(8)
+  geoLevel              GeoLevel
+  geoCode               String   @db.VarChar(10) // code INSEE, département ou région
+  geoLabel              String   @db.VarChar(140)
+  periodStart           DateTime @db.Date
+  periodEnd             DateTime @db.Date
+  offerCount            Int
+  medianHourlyRateCents Int?
+  p25HourlyRateCents    Int?
+  p75HourlyRateCents    Int?
+  tensionIndex          Decimal? @db.Decimal(5, 2)
+  source                String   @db.VarChar(60) // "france-travail" | "dares"
+  importBatchId         String?  @db.VarChar(40) // référence du batch Mongo
+  computedAt            DateTime @default(now()) @db.Timestamptz(3)
+
+  @@unique([romeCode, geoLevel, geoCode, periodStart, source])
+  @@index([geoLevel, geoCode])
+  @@map("market_indicators")
+}
+
+// =============================================================================
+// NOTIFICATIONS ET INTÉGRATION NOCODE
+// =============================================================================
+
+model Notification {
+  id         String              @id @default(uuid()) @db.Uuid
+  userId     String              @db.Uuid
+  channel    NotificationChannel @default(IN_APP)
+  type       String              @db.VarChar(60) // "mission.matched", "contract.ready"…
+  title      String              @db.VarChar(180)
+  body       String              @db.Text
+  linkUrl    String?             @db.VarChar(255)
+  sentAt     DateTime?           @db.Timestamptz(3)
+  readAt     DateTime?           @db.Timestamptz(3)
+  createdAt  DateTime            @default(now()) @db.Timestamptz(3)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, readAt])
+  @@map("notifications")
+}
+
+// Outbox transactionnel vers n8n : garantit qu'un événement métier committé
+// finit par être livré au workflow, même en cas de panne du webhook.
+model WebhookOutbox {
+  id           String       @id @default(uuid()) @db.Uuid
+  eventType    String       @db.VarChar(60)
+  aggregateId  String       @db.Uuid
+  payload      Json         @db.JsonB
+  status       OutboxStatus @default(PENDING)
+  attempts     Int          @default(0) @db.SmallInt
+  lastError    String?      @db.Text
+  nextRetryAt  DateTime?    @db.Timestamptz(3)
+  deliveredAt  DateTime?    @db.Timestamptz(3)
+  n8nExecutionId String?    @db.VarChar(60)
+  createdAt    DateTime     @default(now()) @db.Timestamptz(3)
+
+  @@index([status, nextRetryAt])
+  @@map("webhook_outbox")
+}
+
+// =============================================================================
+// CONFORMITÉ RGPD
+// =============================================================================
+
+model Consent {
+  id        String         @id @default(uuid()) @db.Uuid
+  userId    String         @db.Uuid
+  purpose   ConsentPurpose
+  isGranted Boolean
+  version   String         @db.VarChar(20) // version des CGU/politique acceptée
+  grantedAt DateTime       @default(now()) @db.Timestamptz(3)
+  revokedAt DateTime?      @db.Timestamptz(3)
+  ipAddress String?        @db.Inet
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, purpose])
+  @@map("consents")
+}
+
+model DataRequest {
+  id          String            @id @default(uuid()) @db.Uuid
+  userId      String            @db.Uuid
+  type        DataRequestType
+  status      DataRequestStatus @default(RECEIVED)
+  requestedAt DateTime          @default(now()) @db.Timestamptz(3)
+  dueAt       DateTime          @db.Timestamptz(3) // délai légal d'un mois
+  completedAt DateTime?         @db.Timestamptz(3)
+  handledBy   String?           @db.Uuid
+  notes       String?           @db.Text
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([status, dueAt])
+  @@map("data_requests")
+}
