@@ -1,0 +1,42 @@
+.public-page { min-height: 100vh; background: var(--creme); color: var(--encre); padding: var(--space-6) max(1rem, 6vw) 0; }
+.public-header { display: flex; justify-content: space-between; align-items: center; gap: var(--space-4); max-width: 1200px; margin: 0 auto; }
+.public-brand { display: inline-flex; color: var(--mandarine); text-decoration: none; }
+.public-header nav { display: flex; gap: var(--space-4); }
+.public-header nav a { color: var(--encre); font-weight: 600; }
+.public-hero { display: grid; justify-items: center; max-width: 1000px; margin: 0 auto; padding: var(--space-7) 0; text-align: center; }
+.public-kicker { color: var(--mandarine-dark); font-size: var(--text-sm); font-weight: 700; letter-spacing: .1em; text-transform: uppercase; }
+.public-hero h1 { color: var(--mandarine); font-size: clamp(5rem, 17vw, 11rem); line-height: .8; }
+.public-hero__logo { display: flex; width: min(100%, 520px); justify-content: center; color: var(--mandarine); font-size: initial; line-height: 1; }
+.public-hero__logo svg { width: min(100%, 320px); height: auto; }
+.public-tagline { margin-top: var(--space-12px); font-family: var(--font-heading); font-size: clamp(1.15rem, 3.5vw, 1.7rem); font-weight: 500; letter-spacing: 0; color: var(--encre); text-transform: none; }
+.public-value { max-width: 72ch; margin-top: var(--space-8); font-size: clamp(1.05rem, 2vw, 1.35rem); }
+.public-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: var(--space-3); margin-top: var(--space-8); }
+.public-button { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; border-radius: var(--apik-radius-pill); padding: var(--space-12px) var(--apik-space-5); text-decoration: none; font: 600 var(--font-body-size)/var(--line-body) var(--font-body); box-shadow: var(--ui-shadow-sm); }
+.public-button--primary { background: var(--mandarine); color: var(--encre); }
+.public-button--secondary { border: 2px solid var(--encre); color: var(--encre); }
+.public-band { max-width: 1200px; margin: var(--space-6) auto 0; border-top: 2px dashed var(--border); padding: var(--space-8) 0 5rem; }
+.public-band h2 { margin: var(--space-2) 0; font-size: clamp(2rem, 5vw, 4rem); }
+.public-band p:last-child { max-width: 60ch; color: var(--muted); font-size: var(--text-lg); }
+.public-page footer { display: flex; justify-content: space-between; max-width: 1200px; margin: 0 auto; border-top: 1px solid var(--border); padding: var(--space-5) 0; color: var(--muted); }
+.public-page footer nav { display: flex; flex-wrap: wrap; gap: var(--space-4); align-items: center; }
+.public-page footer span { color: var(--mandarine); font: 700 1.4rem var(--font-heading); }
+.public-page footer a { color: var(--encre); }
+.public-mission { max-width: 1100px; margin: 0 auto; padding: clamp(4rem, 9vw, 7rem) 0; }
+.public-mission h1 { max-width: 16ch; margin-top: var(--space-3); font-size: clamp(2.8rem, 7vw, 6rem); }
+.public-mission__lead { max-width: 60ch; color: var(--muted); font-size: var(--text-lg); }
+.public-mission__grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-5); margin-top: var(--space-8); }
+.public-mission__grid .ui-card { display: grid; align-content: start; gap: var(--space-4); }
+.public-details { display: grid; gap: var(--space-3); }
+.public-details div { border-top: 1px solid var(--border); padding-top: var(--space-3); }
+.public-details dt { color: var(--muted); font-size: var(--text-sm); }
+.public-details dd { margin: var(--space-1) 0 0; font-weight: 600; }
+.public-mission__grid .public-button { width: fit-content; margin-top: var(--space-3); }
+.legal-page { min-height: 100vh; background: var(--creme); color: var(--encre); padding: var(--space-6) max(1rem, 6vw) 5rem; }
+.legal-page__header { display: flex; justify-content: space-between; align-items: center; max-width: 900px; margin: 0 auto; }
+.legal-page__header a { color: var(--encre); font-weight: 600; }
+.legal-page__content { max-width: 760px; margin: 0 auto; padding: clamp(3rem, 8vw, 6rem) 0; }
+.legal-page__content h1 { margin: var(--space-3) 0 var(--space-6); }
+.legal-page__content h2 { margin: var(--space-8) 0 var(--space-2); font-size: var(--text-xl); }
+.legal-page__content p { max-width: 70ch; line-height: 1.6; }
+.legal-notice { border-left: 4px solid var(--jaune); background: color-mix(in srgb, var(--jaune) 18%, var(--card)); padding: var(--space-4); }
+@media (max-width: 700px) { .public-header { align-items: start; flex-direction: column; } .public-header nav { flex-wrap: wrap; } .public-mission__grid { grid-template-columns: 1fr; } }

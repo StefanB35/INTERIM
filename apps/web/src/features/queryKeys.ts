@@ -1,0 +1,1 @@
+export const queryKeys = { sessions: ['sessions'] as const, missions: ['missions'] as const, matchRun: (id: string) => ['match-runs', id] as const, animatorProposals: ['animator', 'proposals'] as const };

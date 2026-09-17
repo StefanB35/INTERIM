@@ -21,6 +21,7 @@ async function main() {
   await prisma.missionApplication.deleteMany();
   await prisma.contract.deleteMany();
   await prisma.mission.deleteMany();
+  await prisma.marketIndicator.deleteMany();
   await prisma.supervisionRule.deleteMany();
   await prisma.animatorProfile.deleteMany();
   await prisma.staffMember.deleteMany();
@@ -118,6 +119,15 @@ async function main() {
       acceptedAt: new Date(),
     },
   });
+
+  for (const [index, details] of [
+    { email: "direction@villeurbanne-animation.fr", name: "Villeurbanne Animation", city: "Villeurbanne", postalCode: "69100" },
+    { email: "contact@lyon-enfance.fr", name: "Lyon Enfance Loisirs", city: "Lyon", postalCode: "69003" },
+  ].entries()) {
+    const extraUser = await prisma.user.create({ data: { email: details.email, passwordHash: "$argon2id$v=19$m=65536,t=3,p=4$dummyhashorganizer", role: UserRole.EMPLOYER, status: AccountStatus.ACTIVE, emailVerifiedAt: new Date() } });
+    const extraOrg = await prisma.organization.create({ data: { name: details.name, legalForm: LegalForm.ASSOCIATION, siret: `213502388000${20 + index}`, nafCode: "8899B", addressLine: "À compléter", postalCode: details.postalCode, city: details.city, contactEmail: details.email } });
+    await prisma.organizationMember.create({ data: { userId: extraUser.id, organizationId: extraOrg.id, role: OrgMemberRole.OWNER, acceptedAt: new Date() } });
+  }
 
   const site = await prisma.site.create({
     data: {
@@ -241,6 +251,14 @@ async function main() {
     },
   });
 
+  for (const details of [
+    { email: "lea.martin@test.apik", firstName: "Léa", lastName: "Martin", city: "Rennes", qualificationLevel: QualificationLevel.QUALIFIED },
+    { email: "nora.bernard@test.apik", firstName: "Nora", lastName: "Bernard", city: "Rennes", qualificationLevel: QualificationLevel.TRAINEE },
+  ] as const) {
+    const extraUser = await prisma.user.create({ data: { email: details.email, passwordHash: "$argon2id$v=19$m=65536,t=3,p=4$dummyhashanimator", role: UserRole.ANIMATOR, status: AccountStatus.ACTIVE, emailVerifiedAt: new Date() } });
+    await prisma.animatorProfile.create({ data: { userId: extraUser.id, firstName: details.firstName, lastName: details.lastName, birthDate: new Date("2000-01-01"), phone: null, postalCode: "35000", city: details.city, latitude: 48.11, longitude: -1.68, travelRadiusKm: 15, hasVehicle: false, qualificationLevel: details.qualificationLevel, experienceYears: 2, honorabilityStatus: HonorabilityStatus.VERIFIED, honorabilityCheckedAt: new Date(), honorabilityExpiresAt: new Date("2027-06-30"), isSearching: true, profileCompletion: 70 } });
+  }
+
   console.log("📅 4. Création d'un créneau périscolaire du soir en déficit...");
   // Date : Vendredi prochain
   const sessionDate = new Date();
@@ -283,6 +301,38 @@ async function main() {
       endsAt: endsAt,
     },
   });
+
+  const mission = await prisma.mission.create({
+    data: {
+      organizationId: org.id,
+      siteId: site.id,
+      reference: "APIK-2026-000148",
+      publicSlug: "animateur-periscolaire-jeudi-soir-jacques-prevert",
+      title: "Animateur périscolaire - jeudi soir",
+      description: "Renfort pour l’accueil du soir des enfants de 6 à 10 ans.",
+      romeCode: "G1203",
+      startDate: sessionDate,
+      endDate: sessionDate,
+      block: SlotBlock.EVENING,
+      totalHours: 1.5,
+      minQualificationLevel: QualificationLevel.QUALIFIED,
+      minExperienceYears: 1,
+      requiredPositions: 1,
+      hourlyRateCents: 1250,
+      marketMedianRateCents: 1280,
+      marketSampleSize: 43,
+      status: "OPEN",
+      trigger: "COMPLIANCE_ENGINE",
+      urgency: "CRITICAL",
+      publishedAt: new Date(),
+      expiresAt: endsAt,
+    },
+  });
+  await prisma.missionSlot.create({ data: { missionId: mission.id, sessionId: careSession.id } });
+  await prisma.missionApplication.create({ data: { missionId: mission.id, animatorProfileId: anim1.id, origin: "MATCHING", status: "SUGGESTED", score: 100, matchRunId: `match-${mission.reference}`, algorithmVersion: "annexe-b-v1" } });
+  await prisma.contract.create({ data: { missionId: mission.id, animatorProfileId: anim1.id, organizationId: org.id, reference: "APIK-CTR-000148", recourseReason: "Remplacement urgent d’un animateur absent", jobTitle: "Animateur périscolaire", jobQualification: "BPJEPS", workplaceAddress: site.addressLine, startDate: sessionDate, endDate: sessionDate, weeklyHours: 1.5, hourlyRateCents: 1250, trialPeriodDays: 0, collectiveAgreement: "ÉCLAT", status: "DRAFT" } });
+  await prisma.availabilityRule.create({ data: { animatorProfileId: anim1.id, weekday: 4, block: SlotBlock.EVENING, startMinutes: 990, endMinutes: 1080, validFrom: new Date("2026-09-01") } });
+  await prisma.marketIndicator.createMany({ data: [{ romeCode: "G1203", geoLevel: "DEPARTMENT", geoCode: "35", geoLabel: "Ille-et-Vilaine", periodStart: new Date("2026-09-01"), periodEnd: new Date("2026-09-30"), offerCount: 187, medianHourlyRateCents: 1280, p25HourlyRateCents: 1150, p75HourlyRateCents: 1420, tensionIndex: 2.4, source: "france-travail" }, { romeCode: "G1203", geoLevel: "COMMUNE", geoCode: "35238", geoLabel: "Rennes", periodStart: new Date("2026-09-01"), periodEnd: new Date("2026-09-30"), offerCount: 42, tensionIndex: 2.8, source: "france-travail" }] });
 
   console.log("✅ Seed terminé avec succès.");
 }
